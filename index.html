@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0F766E">
+  <meta name="description" content="Native Language — веб-приложение для изучения английского языка.">
+  <title>Native Language</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon.ico" sizes="any">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css?v=1">
+</head>
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="logo" aria-label="Native Language">
+        <span class="logo-icon" aria-hidden="true">🌐</span>
+        <span class="logo-text">Native Language</span>
+      </div>
+      <nav class="main-nav" id="mainNav" aria-label="Навигация">
+        <button data-route="home" class="nav-link active" type="button">Главная</button>
+        <button data-route="learn" class="nav-link" type="button">Учить</button>
+        <button data-route="profile" class="nav-link" type="button">Профиль</button>
+      </nav>
+    </header>
+
+    <main id="main" class="main-content">
+      <section id="route-home" class="route active">
+        <div class="hero">
+          <h1>Сделай английский нативным</h1>
+          <p class="subtitle">Персональное веб-приложение для ежедневной практики языка.</p>
+          <button class="cta" data-route="learn" type="button">Начать занятие</button>
+        </div>
+        <div class="features">
+          <article class="feature-card">
+            <span class="feature-icon">🎯</span>
+            <h2>Технология изучения</h2>
+            <p>Работа над восприятием и речью, а не зубрёжкой правил.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon">🔁</span>
+            <h2>Ежедневная практика</h2>
+            <p>Короткие сессии, которые легко встраивать в день.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-icon">📱</span>
+            <h2>Добавь на рабочий стол</h2>
+            <p>Работает как нативное приложение на телефоне и компьютере.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="route-learn" class="route">
+        <div class="card learn-card">
+          <h1>Учить</h1>
+          <p>Здесь появится интерфейс занятий. Пока заготовка.</p>
+          <div class="placeholder-box" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      <section id="route-profile" class="route">
+        <div class="card profile-card">
+          <h1>Профиль</h1>
+          <p>Статистика, настройки и прогресс появятся здесь.</p>
+          <div class="placeholder-box" aria-hidden="true"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <small>Native Language · Виталий</small>
+    </footer>
+  </div>
+
+  <script src="app.js?v=1" defer></script>
+</body>
+</html>
