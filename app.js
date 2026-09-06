@@ -7,6 +7,14 @@
   function $(selector, root = document) { return root.querySelector(selector); }
   function $$(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
 
+  const icons = {
+    speaker: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-speaker"></use></svg>',
+    check: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg>',
+    x: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>',
+    clipboard: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>',
+    magic: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-magic"></use></svg>'
+  };
+
   function todayKey() {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -81,7 +89,6 @@
         input.focus();
       }
     } catch (err) {
-      // Fallback: allow native paste if clipboard permission denied
       input.focus();
     }
   }
@@ -98,7 +105,6 @@
     } catch (e) {
       console.error('Generate failed', e);
     }
-    // Fallback templates
     return [
       `I often use the word "${term}" in my speech.`,
       `Can you say "${term}" again, please?`,
@@ -154,10 +160,10 @@
       <div class="word-card">
         <div class="word-card-head">
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">🔊</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.speaker}</button>
         </div>
         <div class="word-meta">
-          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? '✅ Used today' : '⏳ Not used yet'}</span>
+          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' Used today' : '⏳ Not used yet'}</span>
           <span class="word-status not-used">${w.sentences.length} sentence${w.sentences.length === 1 ? '' : 's'}</span>
         </div>
       </div>
@@ -182,7 +188,7 @@
       <div class="word-card" data-word-index="${i}">
         <div class="word-card-head">
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">🔊</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.speaker}</button>
         </div>
 
         <div class="sentences-block">
@@ -193,7 +199,7 @@
           <form class="add-sentence-form" data-action="sentence" data-index="${i}">
             <div class="input-with-clear">
               <input type="text" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
-              <button type="button" class="input-clear" data-clear-sentence aria-label="Clear">×</button>
+              <button type="button" class="input-clear" data-clear-sentence aria-label="Clear">${icons.x}</button>
             </div>
             <button type="submit" class="btn btn-primary btn-small">+ Add</button>
           </form>
@@ -201,7 +207,7 @@
 
         <div class="generate-block">
           <button type="button" class="btn btn-secondary btn-small generate-btn" data-action="generate" data-index="${i}">
-            ✨ Generate examples
+            ${icons.magic} Generate examples
           </button>
           <p class="generate-hint">Creates 3 simple English sentences with this word.</p>
         </div>
@@ -219,8 +225,8 @@
       <div class="sentence-item">
         <span class="sentence-text">${escapeHtml(text)}</span>
         <div class="sentence-actions">
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Speak">🔊</button>
-          <button class="btn btn-icon btn-danger" data-action="delete-sentence" data-word="${wordIndex}" data-sentence="${sentenceIndex}" type="button" aria-label="Delete">×</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Speak">${icons.speaker}</button>
+          <button class="btn btn-icon btn-danger" data-action="delete-sentence" data-word="${wordIndex}" data-sentence="${sentenceIndex}" type="button" aria-label="Delete">${icons.x}</button>
         </div>
       </div>`;
   }
@@ -244,8 +250,8 @@
         <p class="practice-word">${escapeHtml(w.term)}</p>
         <p class="practice-hint">Make a sentence with this word and say it aloud.</p>
         <div class="practice-actions">
-          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">🔊 Listen</button>
-          <button class="btn btn-primary btn-small" data-action="mark-used" data-index="${i}" type="button">✅ I said it</button>
+          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.speaker} Listen</button>
+          <button class="btn btn-primary btn-small" data-action="mark-used" data-index="${i}" type="button">${icons.check} I said it</button>
         </div>
       </div>
     `).join('');
@@ -283,7 +289,7 @@
               <div class="base-word">
                 <div class="base-word-head">
                   <span class="base-word-term">${escapeHtml(w.term)}</span>
-                  <span class="base-word-status ${w.used ? '' : 'inactive'}">${w.used ? '✅ used' : '⏳ not used'}</span>
+                  <span class="base-word-status ${w.used ? '' : 'inactive'}">${w.used ? icons.check + ' used' : '⏳ not used'}</span>
                 </div>
                 ${w.sentences.length ? `<ul class="base-sentences">${w.sentences.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : '<p style="margin:4px 0 0;font-size:14px;color:var(--slate-500);">No sentences yet.</p>'}
               </div>
@@ -405,7 +411,7 @@
         if (!word) return;
 
         genBtn.disabled = true;
-        genBtn.textContent = '⏳ Generating…';
+        genBtn.innerHTML = icons.magic + ' Generating…';
 
         generateSentences(word.term).then(sentences => {
           sentences.forEach(s => {
@@ -415,7 +421,7 @@
           renderWords();
         }).finally(() => {
           genBtn.disabled = false;
-          genBtn.textContent = '✨ Generate examples';
+          genBtn.innerHTML = icons.magic + ' Generate examples';
         });
       }
     });

@@ -183,7 +183,11 @@ h1 {
   justify-content: center;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
-  padding: 0 0 2px 0;
+  padding: 0;
+}
+.input-clear .icon {
+  width: 14px;
+  height: 14px;
 }
 .input-clear:hover {
   background: var(--slate-500);
@@ -272,6 +276,22 @@ h1 {
   justify-content: center;
   font-size: 18px;
 }
+.btn-icon .icon {
+  width: 22px;
+  height: 22px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.icon-small {
+  width: 14px;
+  height: 14px;
+}
 
 /* Word cards */
 .word-list, .words-list { display: flex; flex-direction: column; gap: 14px; }
@@ -315,6 +335,11 @@ h1 {
 .word-status.not-used {
   background: var(--teal-50);
   color: var(--teal-700);
+}
+.word-status .icon {
+  width: 14px;
+  height: 14px;
+  margin-right: 4px;
 }
 
 .sentences-block { margin-top: 14px; }
@@ -384,6 +409,10 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+.generate-btn .icon {
+  width: 16px;
+  height: 16px;
 }
 .generate-btn:disabled {
   opacity: 0.6;
@@ -531,6 +560,11 @@ h1 {
 .base-word-status.inactive {
   color: var(--slate-500);
   background: var(--slate-200);
+}
+.base-word-status .icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 3px;
 }
 .base-sentences {
   list-style: none;

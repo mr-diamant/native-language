@@ -10,7 +10,7 @@
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <div id="app">
@@ -42,21 +42,27 @@
                 <input type="text" name="word1" class="word-input" placeholder="e.g. hello" required autocomplete="off" autocapitalize="off">
                 <button type="button" class="input-clear" data-clear="word1" aria-label="Clear">×</button>
               </div>
-              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word1">📋</button>
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word1" aria-label="Paste">
+                <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>
+              </button>
             </div>
             <div class="word-field">
               <div class="input-with-clear">
                 <input type="text" name="word2" class="word-input" placeholder="e.g. world" required autocomplete="off" autocapitalize="off">
                 <button type="button" class="input-clear" data-clear="word2" aria-label="Clear">×</button>
               </div>
-              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word2">📋</button>
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word2" aria-label="Paste">
+                <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>
+              </button>
             </div>
             <div class="word-field">
               <div class="input-with-clear">
                 <input type="text" name="word3" class="word-input" placeholder="e.g. friend" required autocomplete="off" autocapitalize="off">
                 <button type="button" class="input-clear" data-clear="word3" aria-label="Clear">×</button>
               </div>
-              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word3">📋</button>
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word3" aria-label="Paste">
+                <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>
+              </button>
             </div>
             <button type="submit" class="cta">Save 3 words</button>
           </form>
@@ -108,6 +114,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=3" defer></script>
+  <script src="app.js?v=4" defer></script>
 </body>
 </html>
