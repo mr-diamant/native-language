@@ -1,11 +1,19 @@
 # Native Language
 
-Веб-приложение для изучения языков.
+Daily English practice PWA: 3 words per day, sentence generation, offline storage.
 
-## Описание
+## Production notes
 
-Native Language — это веб-приложение, созданное для помощи в изучении и практике иностранных языков. Здесь будет появляться полное описание проекта, инструкции по запуску, функционал и прочая документация по мере разработки.
+- `api.php` calls OpenAI through a server-side proxy. Browser never sees the API key.
+- Create `config.local.php` on the server (not tracked in Git) with your real OpenAI key:
 
-## Статус
+```php
+<?php
+define('OPENAI_API_KEY', 'sk-...');
+```
 
-Проект только создан. Структура и код будут добавляться итеративно.
+- `config.php` in the repo has an empty placeholder key.
+
+## Deploy
+
+Files are plain HTML/CSS/JS + PHP. Upload everything except `.git` to a shared-hosting subfolder.

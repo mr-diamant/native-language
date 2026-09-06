@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0F766E">
-  <meta name="description" content="Native Language — веб-приложение для изучения английского языка.">
+  <meta name="description" content="Native Language — daily English practice tool.">
   <title>Native Language</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=2">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
   <div id="app">
@@ -19,77 +19,86 @@
         <span class="logo-icon" aria-hidden="true">🌐</span>
         <span class="logo-text">Native</span>
       </div>
-      <nav class="main-nav" id="mainNav" aria-label="Навигация">
-        <button data-route="today" class="nav-link active" type="button">Сегодня</button>
-        <button data-route="words" class="nav-link" type="button">Слова</button>
-        <button data-route="practice" class="nav-link" type="button">Практика</button>
-        <button data-route="base" class="nav-link" type="button">База</button>
-        <button data-route="profile" class="nav-link" type="button">Профиль</button>
+      <nav class="main-nav" id="mainNav" aria-label="Navigation">
+        <button data-route="today" class="nav-link active" type="button">Today</button>
+        <button data-route="words" class="nav-link" type="button">Words</button>
+        <button data-route="practice" class="nav-link" type="button">Practice</button>
+        <button data-route="base" class="nav-link" type="button">Base</button>
+        <button data-route="profile" class="nav-link" type="button">Profile</button>
       </nav>
     </header>
 
     <main id="main" class="main-content">
       <section id="route-today" class="route active">
         <div class="today-header">
-          <h1>Сегодняшние 3 слова</h1>
+          <h1>Today's 3 words</h1>
           <p class="today-date" id="todayDate"></p>
         </div>
         <div id="todayEmpty" class="today-empty">
-          <p class="empty-title">Какие 3 слова ты изучаешь сегодня?</p>
+          <p class="empty-title">Which 3 English words are you learning today?</p>
           <form id="todayForm" class="today-form">
-            <input type="text" name="word1" class="word-input" placeholder="Например: hello" required autocomplete="off" autocapitalize="off">
-            <input type="text" name="word2" class="word-input" placeholder="Например: world" required autocomplete="off" autocapitalize="off">
-            <input type="text" name="word3" class="word-input" placeholder="Например: friend" required autocomplete="off" autocapitalize="off">
-            <button type="submit" class="cta">Сохранить 3 слова дня</button>
+            <div class="word-field">
+              <input type="text" name="word1" class="word-input" placeholder="e.g. hello" required autocomplete="off" autocapitalize="off">
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word1">📋</button>
+            </div>
+            <div class="word-field">
+              <input type="text" name="word2" class="word-input" placeholder="e.g. world" required autocomplete="off" autocapitalize="off">
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word2">📋</button>
+            </div>
+            <div class="word-field">
+              <input type="text" name="word3" class="word-input" placeholder="e.g. friend" required autocomplete="off" autocapitalize="off">
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word3">📋</button>
+            </div>
+            <button type="submit" class="cta">Save 3 words</button>
           </form>
         </div>
         <div id="todayWords" class="today-words hidden">
           <div class="word-list" id="todayWordList"></div>
           <div class="today-actions">
-            <button class="btn btn-primary" data-route="words" type="button">Добавить переводы и предложения</button>
-            <button class="btn btn-secondary" data-route="practice" type="button">Практиковаться</button>
+            <button class="btn btn-primary" data-route="words" type="button">Add sentences</button>
+            <button class="btn btn-secondary" data-route="practice" type="button">Practice</button>
           </div>
         </div>
       </section>
 
       <section id="route-words" class="route">
-        <h1>Работа со словами</h1>
-        <p class="section-subtitle">Сохрани перевод и составь простые предложения с каждым словом.</p>
+        <h1>Words of the day</h1>
+        <p class="section-subtitle">Generate example sentences and say them aloud. Build natural speech.</p>
         <div id="wordsList" class="words-list"></div>
       </section>
 
       <section id="route-practice" class="route">
-        <h1>Практика</h1>
-        <p class="section-subtitle">Пробегись по словам, озвучь их и составь предложение вслух.</p>
+        <h1>Practice</h1>
+        <p class="section-subtitle">Go through today's words. Speak them in sentences.</p>
         <div id="practiceCards" class="practice-cards"></div>
       </section>
 
       <section id="route-base" class="route">
-        <h1>База знаний</h1>
-        <p class="section-subtitle">Все дни, слова, переводы и предложения.</p>
+        <h1>Knowledge base</h1>
+        <p class="section-subtitle">All your words and sentences, sorted by date.</p>
         <div id="baseStats" class="base-stats"></div>
         <div id="baseList" class="base-list"></div>
       </section>
 
       <section id="route-profile" class="route">
-        <h1>Профиль</h1>
+        <h1>Profile</h1>
         <div class="profile-grid" id="profileGrid"></div>
         <div class="profile-actions">
-          <button class="btn btn-secondary" id="exportData" type="button">Экспортировать JSON</button>
+          <button class="btn btn-secondary" id="exportData" type="button">Export JSON</button>
           <label class="btn btn-secondary file-label">
-            Импортировать JSON
+            Import JSON
             <input type="file" id="importData" accept=".json,application/json" hidden>
           </label>
-          <button class="btn btn-danger" id="clearData" type="button">Очистить все данные</button>
+          <button class="btn btn-danger" id="clearData" type="button">Clear all data</button>
         </div>
       </section>
     </main>
 
     <footer class="app-footer">
-      <small>Native Language · Виталий</small>
+      <small>Native Language · Vitaliy</small>
     </footer>
   </div>
 
-  <script src="app.js?v=2" defer></script>
+  <script src="app.js?v=3" defer></script>
 </body>
 </html>

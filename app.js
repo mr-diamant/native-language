@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const STORAGE_KEY = 'native-language-data-v1';
+  const STORAGE_KEY = 'native-language-data-v2';
   const routes = ['today', 'words', 'practice', 'base', 'profile'];
 
   function $(selector, root = document) { return root.querySelector(selector); }
@@ -47,10 +47,9 @@
       term = term.trim().toLowerCase();
       if (!term) return;
       if (!day.words.find(w => w.term === term)) {
-        day.words.push({ term, translate: '', sentences: [], used: false });
+        day.words.push({ term, sentences: [], used: false });
       }
     });
-    // reorder to match input, keep extras
     const map = new Map(day.words.map(w => [w.term, w]));
     const ordered = [];
     terms.forEach(term => {
@@ -70,6 +69,41 @@
     utter.lang = 'en-US';
     utter.rate = 0.9;
     window.speechSynthesis.speak(utter);
+  }
+
+  async function pasteToInput(name) {
+    const input = document.querySelector(`[name="${name}"]`);
+    if (!input) return;
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        input.value = text.trim().split(/\s+/)[0];
+        input.focus();
+      }
+    } catch (err) {
+      // Fallback: allow native paste if clipboard permission denied
+      input.focus();
+    }
+  }
+
+  async function generateSentences(term) {
+    try {
+      const res = await fetch('api.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ word: term, count: 3 })
+      });
+      const json = await res.json();
+      if (json.sentences && json.sentences.length) return json.sentences;
+    } catch (e) {
+      console.error('Generate failed', e);
+    }
+    // Fallback templates
+    return [
+      `I often use the word "${term}" in my speech.`,
+      `Can you say "${term}" again, please?`,
+      `Today I learned the word "${term}".`
+    ];
   }
 
   function navigate(route) {
@@ -116,17 +150,15 @@
     empty.classList.add('hidden');
     wordsBlock.classList.remove('hidden');
 
-    const usedCount = day.words.filter(w => w.used).length;
-    list.innerHTML = day.words.map((w, i) => `
+    list.innerHTML = day.words.map((w) => `
       <div class="word-card">
         <div class="word-card-head">
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Озвучить">🔊</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">🔊</button>
         </div>
-        ${w.translate ? `<div class="translate-display"><span class="translate-label">Перевод</span> · ${escapeHtml(w.translate)}</div>` : '<div class="translate-display" style="background:transparent;padding:0;"><span class="translate-label">Перевод не добавлен</span></div>'}
         <div class="word-meta">
-          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? '✅ Использовал сегодня' : '⏳ Пока не использовал'}</span>
-          <span class="word-status not-used">${w.sentences.length} предл.</span>
+          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? '✅ Used today' : '⏳ Not used yet'}</span>
+          <span class="word-status not-used">${w.sentences.length} sentence${w.sentences.length === 1 ? '' : 's'}</span>
         </div>
       </div>
     `).join('');
@@ -140,8 +172,8 @@
     if (day.words.length === 0) {
       container.innerHTML = `
         <div class="today-empty">
-          <p class="empty-title">Сначала добавь 3 слова на главной «Сегодня».</p>
-          <button class="cta" data-route="today" type="button">Добавить слова</button>
+          <p class="empty-title">Add 3 words on the Today screen first.</p>
+          <button class="cta" data-route="today" type="button">Add words</button>
         </div>`;
       return;
     }
@@ -150,28 +182,30 @@
       <div class="word-card" data-word-index="${i}">
         <div class="word-card-head">
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Озвучить">🔊</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">🔊</button>
         </div>
 
-        <form class="translate-form" data-action="translate" data-index="${i}">
-          <input type="text" class="translate-input" value="${escapeHtml(w.translate)}" placeholder="Перевод слова" required autocomplete="off">
-          <button type="submit" class="btn btn-primary btn-small">Сохранить</button>
-        </form>
-
         <div class="sentences-block">
-          <p class="sentences-title">Мои предложения</p>
+          <p class="sentences-title">My sentences</p>
           <div class="sentences-list" id="sentences-${i}">
-            ${w.sentences.length ? w.sentences.map((s, si) => sentenceHtml(s, i, si)).join('') : '<p style="margin:0;color:var(--slate-500);font-size:14px;">Пока нет предложений.</p>'}
+            ${w.sentences.length ? w.sentences.map((s, si) => sentenceHtml(s, i, si)).join('') : '<p style="margin:0;color:var(--slate-500);font-size:14px;">No sentences yet.</p>'}
           </div>
           <form class="add-sentence-form" data-action="sentence" data-index="${i}">
-            <input type="text" placeholder="Составь предложение с этим словом" required autocomplete="off" autocapitalize="sentences">
-            <button type="submit" class="btn btn-primary btn-small">+ Добавить</button>
+            <input type="text" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
+            <button type="submit" class="btn btn-primary btn-small">+ Add</button>
           </form>
+        </div>
+
+        <div class="generate-block">
+          <button type="button" class="btn btn-secondary btn-small generate-btn" data-action="generate" data-index="${i}">
+            ✨ Generate examples
+          </button>
+          <p class="generate-hint">Creates 3 simple English sentences with this word.</p>
         </div>
 
         <label class="used-toggle">
           <input type="checkbox" data-action="used" data-index="${i}" ${w.used ? 'checked' : ''}>
-          <span>Я уже использовал это слово сегодня</span>
+          <span>I have used this word today</span>
         </label>
       </div>
     `).join('');
@@ -182,8 +216,8 @@
       <div class="sentence-item">
         <span class="sentence-text">${escapeHtml(text)}</span>
         <div class="sentence-actions">
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Озвучить">🔊</button>
-          <button class="btn btn-icon btn-danger" data-action="delete-sentence" data-word="${wordIndex}" data-sentence="${sentenceIndex}" type="button" aria-label="Удалить">×</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Speak">🔊</button>
+          <button class="btn btn-icon btn-danger" data-action="delete-sentence" data-word="${wordIndex}" data-sentence="${sentenceIndex}" type="button" aria-label="Delete">×</button>
         </div>
       </div>`;
   }
@@ -196,8 +230,8 @@
     if (day.words.length === 0) {
       container.innerHTML = `
         <div class="today-empty">
-          <p class="empty-title">Сначала добавь сегодняшние слова.</p>
-          <button class="cta" data-route="today" type="button">Добавить слова</button>
+          <p class="empty-title">Add today's words first.</p>
+          <button class="cta" data-route="today" type="button">Add words</button>
         </div>`;
       return;
     }
@@ -205,11 +239,10 @@
     container.innerHTML = day.words.map((w, i) => `
       <div class="practice-card" data-practice-index="${i}">
         <p class="practice-word">${escapeHtml(w.term)}</p>
-        <p class="practice-translate hidden" id="practice-translate-${i}">${escapeHtml(w.translate || 'Перевод не добавлен')}</p>
+        <p class="practice-hint">Make a sentence with this word and say it aloud.</p>
         <div class="practice-actions">
-          <button class="btn btn-secondary btn-small" data-action="show-translate" data-index="${i}" type="button">Показать перевод</button>
-          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">🔊 Слушать</button>
-          <button class="btn btn-primary btn-small" data-action="mark-used" data-index="${i}" type="button">✅ Я вспомнил / сказал</button>
+          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">🔊 Listen</button>
+          <button class="btn btn-primary btn-small" data-action="mark-used" data-index="${i}" type="button">✅ I said it</button>
         </div>
       </div>
     `).join('');
@@ -222,15 +255,15 @@
     const totalUsed = data.days.reduce((sum, d) => sum + d.words.filter(w => w.used).length, 0);
 
     $('#baseStats').innerHTML = `
-      <div class="stat-card"><div class="stat-value">${data.days.length}</div><div class="stat-label">Дней учёбы</div></div>
-      <div class="stat-card"><div class="stat-value">${totalWords}</div><div class="stat-label">Всего слов</div></div>
-      <div class="stat-card"><div class="stat-value">${totalSentences}</div><div class="stat-label">Всего предложений</div></div>
-      <div class="stat-card"><div class="stat-value">${totalUsed}</div><div class="stat-label">Использовано</div></div>
+      <div class="stat-card"><div class="stat-value">${data.days.length}</div><div class="stat-label">Days studied</div></div>
+      <div class="stat-card"><div class="stat-value">${totalWords}</div><div class="stat-label">Total words</div></div>
+      <div class="stat-card"><div class="stat-value">${totalSentences}</div><div class="stat-label">Total sentences</div></div>
+      <div class="stat-card"><div class="stat-value">${totalUsed}</div><div class="stat-label">Words used</div></div>
     `;
 
     const list = $('#baseList');
     if (data.days.length === 0) {
-      list.innerHTML = '<div class="base-empty">Пока нет записей. Начни с главной «Сегодня».</div>';
+      list.innerHTML = '<div class="base-empty">No records yet. Start from Today.</div>';
       return;
     }
 
@@ -240,14 +273,16 @@
         <article class="base-day">
           <div class="base-day-head">
             <h3 class="base-day-date">${formatDate(day.date)}</h3>
-            <span class="base-day-count">${day.words.length} слов · ${used} использовано · ${day.words.reduce((s, w) => s + w.sentences.length, 0)} предл.</span>
+            <span class="base-day-count">${day.words.length} words · ${used} used · ${day.words.reduce((s, w) => s + w.sentences.length, 0)} sentences</span>
           </div>
           <div class="base-words">
             ${day.words.map(w => `
               <div class="base-word">
-                <div class="base-word-term">${escapeHtml(w.term)} ${w.used ? '✅' : ''}</div>
-                ${w.translate ? `<div class="base-word-translate">${escapeHtml(w.translate)}</div>` : ''}
-                ${w.sentences.length ? `<ul class="base-sentences">${w.sentences.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : ''}
+                <div class="base-word-head">
+                  <span class="base-word-term">${escapeHtml(w.term)}</span>
+                  <span class="base-word-status ${w.used ? '' : 'inactive'}">${w.used ? '✅ used' : '⏳ not used'}</span>
+                </div>
+                ${w.sentences.length ? `<ul class="base-sentences">${w.sentences.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : '<p style="margin:4px 0 0;font-size:14px;color:var(--slate-500);">No sentences yet.</p>'}
               </div>
             `).join('')}
           </div>
@@ -266,11 +301,11 @@
     const streak = calculateStreak(data.days);
 
     $('#profileGrid').innerHTML = `
-      <div class="stat-card"><div class="stat-value">${streak}</div><div class="stat-label">Дней подряд</div></div>
-      <div class="stat-card"><div class="stat-value">${totalWords}</div><div class="stat-label">Всего слов</div></div>
-      <div class="stat-card"><div class="stat-value">${totalSentences}</div><div class="stat-label">Всего предложений</div></div>
-      <div class="stat-card"><div class="stat-value">${totalUsed}</div><div class="stat-label">Использовано слов</div></div>
-      <div class="stat-card"><div class="stat-value">${todayUsed}/${todayTotal}</div><div class="stat-label">Сегодня использовано</div></div>
+      <div class="stat-card"><div class="stat-value">${streak}</div><div class="stat-label">Streak days</div></div>
+      <div class="stat-card"><div class="stat-value">${totalWords}</div><div class="stat-label">Total words</div></div>
+      <div class="stat-card"><div class="stat-value">${totalSentences}</div><div class="stat-label">Total sentences</div></div>
+      <div class="stat-card"><div class="stat-value">${totalUsed}</div><div class="stat-label">Words used</div></div>
+      <div class="stat-card"><div class="stat-value">${todayUsed}/${todayTotal}</div><div class="stat-label">Used today</div></div>
     `;
   }
 
@@ -280,13 +315,6 @@
     const today = todayKey();
     let streak = 0;
     let cursor = new Date();
-    const check = (date, key) => {
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, '0');
-      const d = String(date.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}` === key;
-    };
-    // allow streak if today is missing but yesterday existed (current day not over)
     let attempts = 0;
     while (attempts < 365) {
       const key = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
@@ -318,17 +346,16 @@
         navigate(trigger.dataset.route);
       }
 
+      const pasteBtn = e.target.closest('[data-paste]');
+      if (pasteBtn) {
+        e.preventDefault();
+        pasteToInput(pasteBtn.dataset.paste);
+      }
+
       const speakBtn = e.target.closest('[data-speak]');
       if (speakBtn) {
         e.preventDefault();
         speak(speakBtn.dataset.speak);
-      }
-
-      const showBtn = e.target.closest('[data-action="show-translate"]');
-      if (showBtn) {
-        e.preventDefault();
-        const el = document.getElementById('practice-translate-' + showBtn.dataset.index);
-        if (el) el.classList.remove('hidden');
       }
 
       const markUsedBtn = e.target.closest('[data-action="mark-used"]');
@@ -343,6 +370,30 @@
           renderPractice();
           renderRoute('today');
         }
+      }
+
+      const genBtn = e.target.closest('[data-action="generate"]');
+      if (genBtn) {
+        e.preventDefault();
+        const idx = Number(genBtn.dataset.index);
+        const data = loadData();
+        const { day } = getOrCreateToday(data);
+        const word = day.words[idx];
+        if (!word) return;
+
+        genBtn.disabled = true;
+        genBtn.textContent = '⏳ Generating…';
+
+        generateSentences(word.term).then(sentences => {
+          sentences.forEach(s => {
+            if (!word.sentences.includes(s)) word.sentences.push(s);
+          });
+          saveData(data);
+          renderWords();
+        }).finally(() => {
+          genBtn.disabled = false;
+          genBtn.textContent = '✨ Generate examples';
+        });
       }
     });
 
@@ -365,17 +416,7 @@
 
       const action = form.dataset.action;
       const idx = Number(form.dataset.index);
-      if (action === 'translate') {
-        e.preventDefault();
-        const input = form.querySelector('.translate-input');
-        const data = loadData();
-        const { day } = getOrCreateToday(data);
-        if (day.words[idx]) {
-          day.words[idx].translate = input.value.trim();
-          saveData(data);
-          renderWords();
-        }
-      } else if (action === 'sentence') {
+      if (action === 'sentence') {
         e.preventDefault();
         const input = form.querySelector('input');
         const text = input.value.trim();
@@ -439,12 +480,12 @@
         try {
           const imported = JSON.parse(reader.result);
           if (!Array.isArray(imported.days)) throw new Error('bad format');
-          if (!confirm(`Импортировать ${imported.days.length} дней? Это заменит текущие данные.`)) return;
+          if (!confirm(`Import ${imported.days.length} days? This will replace current data.`)) return;
           saveData(imported);
-          alert('Данные импортированы.');
+          alert('Data imported.');
           renderRoute(routes.find(r => $(`#route-${r}`).classList.contains('active')) || 'today');
         } catch (err) {
-          alert('Не удалось импортировать файл.');
+          alert('Could not import file.');
         }
       };
       reader.readAsText(file);
@@ -452,7 +493,7 @@
     });
 
     $('#clearData').addEventListener('click', () => {
-      if (!confirm('Удалить ВСЕ данные? Это необратимо.')) return;
+      if (!confirm('Delete ALL data? This cannot be undone.')) return;
       localStorage.removeItem(STORAGE_KEY);
       renderRoute(routes.find(r => $(`#route-${r}`).classList.contains('active')) || 'today');
     });

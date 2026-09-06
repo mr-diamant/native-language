@@ -1,13 +1,13 @@
 {
   "name": "Native Language",
   "short_name": "Native Lang",
-  "description": "Веб-приложение для изучения английского языка.",
+  "description": "Daily English practice tool: 3 words, many sentences, native speech.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0F766E",
   "theme_color": "#0F766E",
   "orientation": "portrait",
-  "lang": "ru",
+  "lang": "en",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
