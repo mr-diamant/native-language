@@ -24,4 +24,7 @@
     <circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-width="20"/>
     <path d="M128 72v56l36 36" fill="none" stroke="currentColor" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
   </symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 256 256" fill="currentColor">
+    <path d="M205.7 93.7a8 8 0 0 0-11.3 0L128 160.1 61.7 93.7a8 8 0 0 0-11.3 11.3l72 72a8 8 0 0 0 11.3 0l72-72a8 8 0 0 0 0-11.3Z"/>
+  </symbol>
 </svg>

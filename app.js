@@ -3,7 +3,7 @@
 
   const STORAGE_KEY = 'native-language-data-v2';
   const SETTINGS_KEY = 'native-language-settings-v1';
-  const routes = ['today', 'words', 'practice', 'base', 'profile'];
+  const routes = ['today', 'words', 'dic', 'base', 'profile'];
 
   function $(selector, root = document) { return root.querySelector(selector); }
   function $$(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
@@ -178,7 +178,7 @@
     switch (route) {
       case 'today': renderToday(); break;
       case 'words': renderWords(); break;
-      case 'practice': renderPractice(); break;
+      case 'dic': renderDic(); break;
       case 'base': renderBase(); break;
       case 'profile': renderProfile(); break;
     }
@@ -343,6 +343,58 @@
     }).join('');
   }
 
+  function renderDic() {
+    const data = loadData();
+    const allWords = [];
+    data.days.forEach(day => {
+      day.words.forEach(w => {
+        allWords.push({ ...w, date: day.date });
+      });
+    });
+    allWords.sort((a, b) => a.term.toLowerCase().localeCompare(b.term.toLowerCase()));
+
+    const q = ($('#dicSearch')?.value || '').trim().toLowerCase();
+    const filtered = q ? allWords.filter(w => w.term.toLowerCase().includes(q)) : allWords;
+
+    const list = $('#dicList');
+    if (!filtered.length) {
+      list.innerHTML = `<div class="empty-state">
+        <p class="empty-title">${allWords.length ? 'No words match your search.' : 'Your dictionary is empty.'}</p>
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map((w, i) => {
+      const sentencesHtml = w.sentences.length
+        ? w.sentences.map((s, si) => `
+            <li class="dic-sentence">
+              <button class="btn btn-icon btn-ghost dic-speak" data-speak="${escapeHtml(s)}" type="button" aria-label="Speak">${icons.play}</button>
+              <span>${escapeHtml(s)}</span>
+            </li>
+          `).join('')
+        : '<li class="dic-empty-sentences">No sentences yet.</li>';
+
+      return `
+        <article class="dic-item" data-dic-index="${i}">
+          <button class="dic-header" type="button" aria-expanded="false">
+            <span class="dic-word">${escapeHtml(w.term)}</span>
+            <span class="dic-meta">
+              <span class="dic-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' used' : icons.hourglass + ' not used'}</span>
+              <svg class="icon dic-chevron" aria-hidden="true"><use href="icons.svg#icon-chevron-down"></use></svg>
+            </span>
+          </button>
+          <div class="dic-body hidden">
+            <div class="dic-toolbar">
+              <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.play} Listen</button>
+              <span class="dic-date">Added ${formatDate(w.date)}</span>
+            </div>
+            <ul class="dic-sentences">${sentencesHtml}</ul>
+          </div>
+        </article>
+      `;
+    }).join('');
+  }
+
   function renderProfile() {
     const data = loadData();
     const totalWords = data.days.reduce((sum, d) => sum + d.words.length, 0);
@@ -463,8 +515,29 @@
         if (day.words[idx]) {
           day.words[idx].used = true;
           saveData(data);
-          renderPractice();
-          renderRoute('today');
+          renderToday();
+        }
+      }
+
+      const dicHeader = e.target.closest('.dic-header');
+      if (dicHeader) {
+        e.preventDefault();
+        const body = dicHeader.nextElementSibling;
+        const isOpen = !body.classList.contains('hidden');
+        body.classList.toggle('hidden', isOpen);
+        dicHeader.setAttribute('aria-expanded', String(!isOpen));
+        const chevron = dicHeader.querySelector('.dic-chevron');
+        if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+      }
+
+      const dicClear = e.target.closest('#dicSearchClear');
+      if (dicClear) {
+        e.preventDefault();
+        const input = $('#dicSearch');
+        if (input) {
+          input.value = '';
+          input.focus();
+          renderDic();
         }
       }
 
@@ -594,6 +667,16 @@
       localStorage.removeItem(STORAGE_KEY);
       renderRoute(routes.find(r => $(`#route-${r}`).classList.contains('active')) || 'today');
     });
+
+    // Dic search
+    const dicSearch = $('#dicSearch');
+    if (dicSearch) {
+      let debounceTimer;
+      dicSearch.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => renderDic(), 120);
+      });
+    }
 
     // TTS settings
     document.body.addEventListener('input', (e) => {

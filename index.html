@@ -22,7 +22,7 @@
       <nav class="main-nav" id="mainNav" aria-label="Navigation">
         <button data-route="today" class="nav-link active" type="button">Today</button>
         <button data-route="words" class="nav-link" type="button">Words</button>
-        <button data-route="practice" class="nav-link" type="button">Practice</button>
+        <button data-route="dic" class="nav-link" type="button">Dic</button>
         <button data-route="base" class="nav-link" type="button">Base</button>
         <button data-route="profile" class="nav-link" type="button">Profile</button>
       </nav>
@@ -77,7 +77,7 @@
           <div class="word-list" id="todayWordList"></div>
           <div class="today-actions">
             <button class="btn btn-primary" data-route="words" type="button">Add sentences</button>
-            <button class="btn btn-secondary" data-route="practice" type="button">Practice</button>
+            <button class="btn btn-secondary" data-route="dic" type="button">Dictionary</button>
           </div>
         </div>
       </section>
@@ -88,10 +88,18 @@
         <div id="wordsList" class="words-list"></div>
       </section>
 
-      <section id="route-practice" class="route">
-        <h1>Practice</h1>
-        <p class="section-subtitle">Go through today's words. Speak them in sentences.</p>
-        <div id="practiceCards" class="practice-cards"></div>
+      <section id="route-dic" class="route">
+        <h1>Dictionary</h1>
+        <p class="section-subtitle">All your words in alphabetical order. Tap to see sentences.</p>
+        <form class="dic-search" id="dicSearchForm">
+          <div class="input-with-clear">
+            <input type="text" id="dicSearch" placeholder="Search word..." autocomplete="off" autocapitalize="off">
+            <button type="button" class="input-clear" id="dicSearchClear" aria-label="Clear search">
+              <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>
+            </button>
+          </div>
+        </form>
+        <div id="dicList" class="dic-list"></div>
       </section>
 
       <section id="route-base" class="route">
