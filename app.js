@@ -393,23 +393,9 @@
   }
 
   function renderProfile() {
-    const data = loadData();
-    const totalWords = data.days.reduce((sum, d) => sum + d.words.length, 0);
-    const totalSentences = data.days.reduce((sum, d) => sum + d.words.reduce((s, w) => s + w.sentences.length, 0), 0);
-    const totalUsed = data.days.reduce((sum, d) => sum + d.words.filter(w => w.used).length, 0);
-    const today = data.days.find(d => d.date === todayKey());
-    const todayTotal = today ? today.words.length : 0;
-    const todayUsed = today ? today.words.filter(w => w.used).length : 0;
-    const streak = calculateStreak(data.days);
     const s = loadSettings();
 
-    $('#profileGrid').innerHTML = `
-      <div class="stat-card"><div class="stat-value">${streak}</div><div class="stat-label">Streak days</div></div>
-      <div class="stat-card"><div class="stat-value">${totalWords}</div><div class="stat-label">Total words</div></div>
-      <div class="stat-card"><div class="stat-value">${totalSentences}</div><div class="stat-label">Total sentences</div></div>
-      <div class="stat-card"><div class="stat-value">${totalUsed}</div><div class="stat-label">Words used</div></div>
-      <div class="stat-card"><div class="stat-value">${todayUsed}/${todayTotal}</div><div class="stat-label">Used today</div></div>
-    `;
+    $('#profileGrid').innerHTML = '';
 
     $('#ttsSettings').innerHTML = `
       <div class="settings-card">
