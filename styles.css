@@ -528,25 +528,6 @@ h1 {
   font-weight: 800;
   color: var(--teal-900);
 }
-.dic-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.dic-status {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 999px;
-}
-.dic-status.used {
-  background: var(--green-100);
-  color: var(--green-700);
-}
-.dic-status.not-used {
-  background: var(--teal-50);
-  color: var(--teal-700);
-}
 .dic-chevron {
   width: 18px;
   height: 18px;

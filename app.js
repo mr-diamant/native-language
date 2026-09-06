@@ -378,10 +378,7 @@
         <article class="dic-item" data-dic-index="${i}">
           <button class="dic-header" type="button" aria-expanded="false">
             <span class="dic-word">${escapeHtml(w.term)}</span>
-            <span class="dic-meta">
-              <span class="dic-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' used' : icons.hourglass + ' not used'}</span>
-              <svg class="icon dic-chevron" aria-hidden="true"><use href="icons.svg#icon-chevron-down"></use></svg>
-            </span>
+            <svg class="icon dic-chevron" aria-hidden="true"><use href="icons.svg#icon-chevron-down"></use></svg>
           </button>
           <div class="dic-body hidden">
             <div class="dic-toolbar">
