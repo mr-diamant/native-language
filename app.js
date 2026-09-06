@@ -44,6 +44,9 @@
     voiceList = window.speechSynthesis.getVoices() || [];
     const s = loadSettings();
     preferredVoice = pickVoice(s.voiceURI, voiceList);
+    if ($('#route-profile').classList.contains('active')) {
+      renderProfile();
+    }
   }
 
   function isEnglish(voice) {
@@ -62,7 +65,7 @@
     let score = 0;
     if (isEnglish(voice)) score += 100;
     if (isIOS(voice)) score += 50;
-    if (/premium|enhanced|neural|siri/.test(uri + name)) score += 80;
+    if (/premium|enhanced|neural/.test(uri + name)) score += 80;
     if (/siri/.test(uri + name)) score += 60;
     if (/samantha/.test(name)) score += 40;
     if (/en[-_]us/.test(voice.lang || '')) score += 20;
