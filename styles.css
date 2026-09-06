@@ -658,8 +658,8 @@ h1 {
   min-width: 0;
 }
 .setting-row input[type="range"] {
-  width: 140px;
-  flex: 0 0 140px;
+  width: 250px;
+  flex: 0 0 250px;
   accent-color: var(--teal-600);
 }
 .settings-hint {
