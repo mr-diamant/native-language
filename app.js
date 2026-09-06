@@ -8,11 +8,11 @@
   function $$(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
 
   const icons = {
-    speaker: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-speaker"></use></svg>',
+    play: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-play"></use></svg>',
     check: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg>',
     x: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>',
     clipboard: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>',
-    magic: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-magic"></use></svg>',
+    textbox: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-textbox"></use></svg>',
     hourglass: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-hourglass"></use></svg>'
   };
 
@@ -161,7 +161,7 @@
       <div class="word-card">
         <div class="word-card-head">
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.speaker}</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.play}</button>
         </div>
         <div class="word-meta">
           <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' Used today' : icons.hourglass + ' Not used yet'}</span>
@@ -189,7 +189,7 @@
       <div class="word-card" data-word-index="${i}">
         <div class="word-card-head">
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.speaker}</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.play}</button>
         </div>
 
         <div class="sentences-block">
@@ -208,7 +208,7 @@
 
         <div class="generate-block">
           <button type="button" class="btn btn-secondary btn-small generate-btn" data-action="generate" data-index="${i}">
-            ${icons.magic} Generate examples
+            ${icons.textbox} Generate examples
           </button>
           <p class="generate-hint">Creates 3 simple English sentences with this word.</p>
         </div>
@@ -226,7 +226,7 @@
       <div class="sentence-item">
         <span class="sentence-text">${escapeHtml(text)}</span>
         <div class="sentence-actions">
-          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Speak">${icons.speaker}</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Speak">${icons.play}</button>
           <button class="btn btn-icon btn-danger" data-action="delete-sentence" data-word="${wordIndex}" data-sentence="${sentenceIndex}" type="button" aria-label="Delete">${icons.x}</button>
         </div>
       </div>`;
@@ -251,7 +251,7 @@
         <p class="practice-word">${escapeHtml(w.term)}</p>
         <p class="practice-hint">Make a sentence with this word and say it aloud.</p>
         <div class="practice-actions">
-          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.speaker} Listen</button>
+          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.play} Listen</button>
           <button class="btn btn-primary btn-small" data-action="mark-used" data-index="${i}" type="button">${icons.check} I said it</button>
         </div>
       </div>
@@ -412,7 +412,7 @@
         if (!word) return;
 
         genBtn.disabled = true;
-        genBtn.innerHTML = icons.magic + ' Generating…';
+        genBtn.innerHTML = icons.textbox + ' Generating…';
 
         generateSentences(word.term).then(sentences => {
           sentences.forEach(s => {
@@ -422,7 +422,7 @@
           renderWords();
         }).finally(() => {
           genBtn.disabled = false;
-          genBtn.innerHTML = icons.magic + ' Generate examples';
+          genBtn.innerHTML = icons.textbox + ' Generate examples';
         });
       }
     });
