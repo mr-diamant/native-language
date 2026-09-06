@@ -402,45 +402,49 @@ h1 {
   height: 12px;
 }
 
-.generate-block {
-  margin-top: 12px;
+.word-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
   padding-top: 12px;
   border-top: 1px solid var(--slate-200);
+  flex-wrap: wrap;
 }
-.generate-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.generate-btn .icon {
-  width: 16px;
-  height: 16px;
-}
-.generate-btn:disabled {
-  opacity: 0.6;
-  cursor: wait;
-}
-.generate-hint {
-  font-size: 13px;
-  color: var(--slate-500);
-  margin: 8px 0 0;
-}
-
 .used-toggle {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
   font-size: 14px;
   font-weight: 700;
   color: var(--slate-600);
   cursor: pointer;
+  margin: 0;
 }
 .used-toggle input {
   width: 20px;
   height: 20px;
   accent-color: var(--teal-700);
   cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .word-controls {
+    gap: 10px;
+  }
+  .generate-btn {
+    flex: 1;
+    justify-content: center;
+  }
+  .used-toggle {
+    font-size: 13px;
+    gap: 6px;
+  }
+  .used-toggle input {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 /* Practice */

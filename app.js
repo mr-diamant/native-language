@@ -2,6 +2,7 @@
   'use strict';
 
   const STORAGE_KEY = 'native-language-data-v2';
+  const SETTINGS_KEY = 'native-language-settings-v1';
   const routes = ['today', 'words', 'practice', 'base', 'profile'];
 
   function $(selector, root = document) { return root.querySelector(selector); }
@@ -15,6 +16,71 @@
     textbox: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-textbox"></use></svg>',
     hourglass: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-hourglass"></use></svg>'
   };
+
+  let voiceList = [];
+  let preferredVoice = null;
+
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      if (!raw) return defaultSettings();
+      const s = JSON.parse(raw);
+      return Object.assign(defaultSettings(), s);
+    } catch (e) {
+      return defaultSettings();
+    }
+  }
+
+  function defaultSettings() {
+    return { voiceURI: 'auto', rate: 0.9, pitch: 1.0 };
+  }
+
+  function saveSettings(s) {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  }
+
+  function refreshVoices() {
+    if (!window.speechSynthesis) return;
+    voiceList = window.speechSynthesis.getVoices() || [];
+    const s = loadSettings();
+    preferredVoice = pickVoice(s.voiceURI, voiceList);
+  }
+
+  function isEnglish(voice) {
+    return /^en[-_]?/i.test(voice.lang || '');
+  }
+
+  function isIOS(voice) {
+    const uri = (voice.voiceURI || '').toLowerCase();
+    const name = (voice.name || '').toLowerCase();
+    return /siri|samantha|allison|aaron|nick|nicky|fred|victoria|daniel|karen|moira|tessa|serena|ava|kyoko|zuzana/.test(uri + name);
+  }
+
+  function rankVoice(voice) {
+    const uri = (voice.voiceURI || '').toLowerCase();
+    const name = (voice.name || '').toLowerCase();
+    let score = 0;
+    if (isEnglish(voice)) score += 100;
+    if (isIOS(voice)) score += 50;
+    if (/premium|enhanced|neural|siri/.test(uri + name)) score += 80;
+    if (/siri/.test(uri + name)) score += 60;
+    if (/samantha/.test(name)) score += 40;
+    if (/en[-_]us/.test(voice.lang || '')) score += 20;
+    if (/en[-_]gb/.test(voice.lang || '')) score += 10;
+    if (voice.default) score -= 5;
+    return score;
+  }
+
+  function pickVoice(requestedURI, voices) {
+    if (requestedURI && requestedURI !== 'auto') {
+      const exact = voices.find(v => v.voiceURI === requestedURI || v.name === requestedURI);
+      if (exact) return exact;
+    }
+    if (!voices.length) return null;
+    const english = voices.filter(isEnglish);
+    const candidates = english.length ? english : voices;
+    return candidates.slice().sort((a, b) => rankVoice(b) - rankVoice(a))[0];
+  }
 
   function todayKey() {
     const d = new Date();
@@ -76,7 +142,11 @@
     window.speechSynthesis.cancel();
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'en-US';
-    utter.rate = 0.9;
+    const s = loadSettings();
+    utter.rate = Number(s.rate) || 0.9;
+    utter.pitch = Number(s.pitch) || 1.0;
+    if (!preferredVoice) refreshVoices();
+    if (preferredVoice) utter.voice = preferredVoice;
     window.speechSynthesis.speak(utter);
   }
 
@@ -193,7 +263,6 @@
         </div>
 
         <div class="sentences-block">
-          <p class="sentences-title">My sentences</p>
           <div class="sentences-list" id="sentences-${i}">
             ${w.sentences.length ? w.sentences.map((s, si) => sentenceHtml(s, i, si)).join('') : '<p style="margin:0;color:var(--slate-500);font-size:14px;">No sentences yet.</p>'}
           </div>
@@ -206,17 +275,16 @@
           </form>
         </div>
 
-        <div class="generate-block">
+        <div class="word-controls">
           <button type="button" class="btn btn-secondary btn-small generate-btn" data-action="generate" data-index="${i}">
             ${icons.textbox} Generate examples
           </button>
-          <p class="generate-hint">Creates 3 simple English sentences with this word.</p>
-        </div>
 
-        <label class="used-toggle">
-          <input type="checkbox" data-action="used" data-index="${i}" ${w.used ? 'checked' : ''}>
-          <span>I have used this word today</span>
-        </label>
+          <label class="used-toggle">
+            <input type="checkbox" data-action="used" data-index="${i}" ${w.used ? 'checked' : ''}>
+            <span>I have used</span>
+          </label>
+        </div>
       </div>
     `).join('');
   }
