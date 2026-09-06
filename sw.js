@@ -1,9 +1,9 @@
-const CACHE_NAME = 'native-language-v1';
+const CACHE_NAME = 'native-language-v2';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './app.js',
+  './styles.css?v=2',
+  './app.js?v=2',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',

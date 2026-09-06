@@ -10,61 +10,77 @@
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
   <div id="app">
     <header class="app-header">
       <div class="logo" aria-label="Native Language">
         <span class="logo-icon" aria-hidden="true">🌐</span>
-        <span class="logo-text">Native Language</span>
+        <span class="logo-text">Native</span>
       </div>
       <nav class="main-nav" id="mainNav" aria-label="Навигация">
-        <button data-route="home" class="nav-link active" type="button">Главная</button>
-        <button data-route="learn" class="nav-link" type="button">Учить</button>
+        <button data-route="today" class="nav-link active" type="button">Сегодня</button>
+        <button data-route="words" class="nav-link" type="button">Слова</button>
+        <button data-route="practice" class="nav-link" type="button">Практика</button>
+        <button data-route="base" class="nav-link" type="button">База</button>
         <button data-route="profile" class="nav-link" type="button">Профиль</button>
       </nav>
     </header>
 
     <main id="main" class="main-content">
-      <section id="route-home" class="route active">
-        <div class="hero">
-          <h1>Сделай английский нативным</h1>
-          <p class="subtitle">Персональное веб-приложение для ежедневной практики языка.</p>
-          <button class="cta" data-route="learn" type="button">Начать занятие</button>
+      <section id="route-today" class="route active">
+        <div class="today-header">
+          <h1>Сегодняшние 3 слова</h1>
+          <p class="today-date" id="todayDate"></p>
         </div>
-        <div class="features">
-          <article class="feature-card">
-            <span class="feature-icon">🎯</span>
-            <h2>Технология изучения</h2>
-            <p>Работа над восприятием и речью, а не зубрёжкой правил.</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-icon">🔁</span>
-            <h2>Ежедневная практика</h2>
-            <p>Короткие сессии, которые легко встраивать в день.</p>
-          </article>
-          <article class="feature-card">
-            <span class="feature-icon">📱</span>
-            <h2>Добавь на рабочий стол</h2>
-            <p>Работает как нативное приложение на телефоне и компьютере.</p>
-          </article>
+        <div id="todayEmpty" class="today-empty">
+          <p class="empty-title">Какие 3 слова ты изучаешь сегодня?</p>
+          <form id="todayForm" class="today-form">
+            <input type="text" name="word1" class="word-input" placeholder="Например: hello" required autocomplete="off" autocapitalize="off">
+            <input type="text" name="word2" class="word-input" placeholder="Например: world" required autocomplete="off" autocapitalize="off">
+            <input type="text" name="word3" class="word-input" placeholder="Например: friend" required autocomplete="off" autocapitalize="off">
+            <button type="submit" class="cta">Сохранить 3 слова дня</button>
+          </form>
+        </div>
+        <div id="todayWords" class="today-words hidden">
+          <div class="word-list" id="todayWordList"></div>
+          <div class="today-actions">
+            <button class="btn btn-primary" data-route="words" type="button">Добавить переводы и предложения</button>
+            <button class="btn btn-secondary" data-route="practice" type="button">Практиковаться</button>
+          </div>
         </div>
       </section>
 
-      <section id="route-learn" class="route">
-        <div class="card learn-card">
-          <h1>Учить</h1>
-          <p>Здесь появится интерфейс занятий. Пока заготовка.</p>
-          <div class="placeholder-box" aria-hidden="true"></div>
-        </div>
+      <section id="route-words" class="route">
+        <h1>Работа со словами</h1>
+        <p class="section-subtitle">Сохрани перевод и составь простые предложения с каждым словом.</p>
+        <div id="wordsList" class="words-list"></div>
+      </section>
+
+      <section id="route-practice" class="route">
+        <h1>Практика</h1>
+        <p class="section-subtitle">Пробегись по словам, озвучь их и составь предложение вслух.</p>
+        <div id="practiceCards" class="practice-cards"></div>
+      </section>
+
+      <section id="route-base" class="route">
+        <h1>База знаний</h1>
+        <p class="section-subtitle">Все дни, слова, переводы и предложения.</p>
+        <div id="baseStats" class="base-stats"></div>
+        <div id="baseList" class="base-list"></div>
       </section>
 
       <section id="route-profile" class="route">
-        <div class="card profile-card">
-          <h1>Профиль</h1>
-          <p>Статистика, настройки и прогресс появятся здесь.</p>
-          <div class="placeholder-box" aria-hidden="true"></div>
+        <h1>Профиль</h1>
+        <div class="profile-grid" id="profileGrid"></div>
+        <div class="profile-actions">
+          <button class="btn btn-secondary" id="exportData" type="button">Экспортировать JSON</button>
+          <label class="btn btn-secondary file-label">
+            Импортировать JSON
+            <input type="file" id="importData" accept=".json,application/json" hidden>
+          </label>
+          <button class="btn btn-danger" id="clearData" type="button">Очистить все данные</button>
         </div>
       </section>
     </main>
@@ -74,6 +90,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=1" defer></script>
+  <script src="app.js?v=2" defer></script>
 </body>
 </html>
