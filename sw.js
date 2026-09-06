@@ -1,4 +1,4 @@
-const CACHE_NAME = 'native-language-v7';
+const CACHE_NAME = 'native-language-v8';
 const ASSETS = [
   './',
   './index.html',
