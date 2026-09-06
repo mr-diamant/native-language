@@ -152,9 +152,44 @@ h1 {
   gap: 8px;
   align-items: center;
 }
-.word-field .word-input {
+.word-field .input-with-clear {
   flex: 1;
 }
+.input-with-clear {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-with-clear input {
+  width: 100%;
+  padding-right: 38px;
+}
+.input-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  appearance: none;
+  border: none;
+  background: var(--slate-200);
+  color: var(--slate-600);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  padding: 0 0 2px 0;
+}
+.input-clear:hover {
+  background: var(--slate-500);
+  color: var(--white);
+}
+
 .word-input {
   appearance: none;
   border: 1px solid var(--slate-200);
@@ -315,8 +350,10 @@ h1 {
   display: flex;
   gap: 8px;
 }
-.add-sentence-form input {
+.add-sentence-form .input-with-clear {
   flex: 1;
+}
+.add-sentence-form input {
   appearance: none;
   border: 1px solid var(--slate-200);
   border-radius: 999px;
@@ -324,10 +361,18 @@ h1 {
   font-size: 15px;
   background: var(--white);
   min-width: 0;
+  width: 100%;
+  padding-right: 34px;
 }
 .add-sentence-form input:focus {
   outline: none;
   border-color: var(--teal-600);
+}
+.add-sentence-form .input-clear {
+  right: 8px;
+  width: 22px;
+  height: 22px;
+  font-size: 16px;
 }
 
 .generate-block {

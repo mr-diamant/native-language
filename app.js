@@ -191,7 +191,10 @@
             ${w.sentences.length ? w.sentences.map((s, si) => sentenceHtml(s, i, si)).join('') : '<p style="margin:0;color:var(--slate-500);font-size:14px;">No sentences yet.</p>'}
           </div>
           <form class="add-sentence-form" data-action="sentence" data-index="${i}">
-            <input type="text" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
+            <div class="input-with-clear">
+              <input type="text" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
+              <button type="button" class="input-clear" data-clear-sentence aria-label="Clear">×</button>
+            </div>
             <button type="submit" class="btn btn-primary btn-small">+ Add</button>
           </form>
         </div>
@@ -346,6 +349,26 @@
         navigate(trigger.dataset.route);
       }
 
+      const clearBtn = e.target.closest('[data-clear]');
+      if (clearBtn) {
+        e.preventDefault();
+        const input = document.querySelector(`[name="${clearBtn.dataset.clear}"]`);
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+
+      const clearSentenceBtn = e.target.closest('[data-clear-sentence]');
+      if (clearSentenceBtn) {
+        e.preventDefault();
+        const input = clearSentenceBtn.closest('.input-with-clear')?.querySelector('input');
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+
       const pasteBtn = e.target.closest('[data-paste]');
       if (pasteBtn) {
         e.preventDefault();
@@ -410,6 +433,7 @@
         const { day } = getOrCreateToday(data);
         ensureWords(day, terms);
         saveData(data);
+        form.reset();
         navigate('words');
         return;
       }
@@ -418,7 +442,7 @@
       const idx = Number(form.dataset.index);
       if (action === 'sentence') {
         e.preventDefault();
-        const input = form.querySelector('input');
+        const input = form.querySelector('.input-with-clear input');
         const text = input.value.trim();
         if (!text) return;
         const data = loadData();

@@ -38,15 +38,24 @@
           <p class="empty-title">Which 3 English words are you learning today?</p>
           <form id="todayForm" class="today-form">
             <div class="word-field">
-              <input type="text" name="word1" class="word-input" placeholder="e.g. hello" required autocomplete="off" autocapitalize="off">
+              <div class="input-with-clear">
+                <input type="text" name="word1" class="word-input" placeholder="e.g. hello" required autocomplete="off" autocapitalize="off">
+                <button type="button" class="input-clear" data-clear="word1" aria-label="Clear">×</button>
+              </div>
               <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word1">📋</button>
             </div>
             <div class="word-field">
-              <input type="text" name="word2" class="word-input" placeholder="e.g. world" required autocomplete="off" autocapitalize="off">
+              <div class="input-with-clear">
+                <input type="text" name="word2" class="word-input" placeholder="e.g. world" required autocomplete="off" autocapitalize="off">
+                <button type="button" class="input-clear" data-clear="word2" aria-label="Clear">×</button>
+              </div>
               <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word2">📋</button>
             </div>
             <div class="word-field">
-              <input type="text" name="word3" class="word-input" placeholder="e.g. friend" required autocomplete="off" autocapitalize="off">
+              <div class="input-with-clear">
+                <input type="text" name="word3" class="word-input" placeholder="e.g. friend" required autocomplete="off" autocapitalize="off">
+                <button type="button" class="input-clear" data-clear="word3" aria-label="Clear">×</button>
+              </div>
               <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="word3">📋</button>
             </div>
             <button type="submit" class="cta">Save 3 words</button>
