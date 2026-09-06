@@ -377,6 +377,8 @@
     const todayTotal = today ? today.words.length : 0;
     const todayUsed = today ? today.words.filter(w => w.used).length : 0;
     const streak = calculateStreak(data.days);
+    const s = loadSettings();
+    const voices = voiceList.length ? voiceList : window.speechSynthesis?.getVoices() || [];
 
     $('#profileGrid').innerHTML = `
       <div class="stat-card"><div class="stat-value">${streak}</div><div class="stat-label">Streak days</div></div>
@@ -384,6 +386,39 @@
       <div class="stat-card"><div class="stat-value">${totalSentences}</div><div class="stat-label">Total sentences</div></div>
       <div class="stat-card"><div class="stat-value">${totalUsed}</div><div class="stat-label">Words used</div></div>
       <div class="stat-card"><div class="stat-value">${todayUsed}/${todayTotal}</div><div class="stat-label">Used today</div></div>
+    `;
+
+    let voiceOptions = '<option value="auto">Auto (best iOS voice)</option>';
+    voices.forEach(v => {
+      const label = `${v.name} (${v.lang})`;
+      voiceOptions += `<option value="${escapeHtml(v.voiceURI)}" ${s.voiceURI === v.voiceURI ? 'selected' : ''}>${escapeHtml(label)}</option>`;
+    });
+
+    $('#ttsSettings').innerHTML = `
+      <div class="settings-card">
+        <h3 class="settings-title">Voice settings</h3>
+        <p class="settings-subtitle">Optimized for iPhone. Pick the clearest English voice.</p>
+
+        <label class="setting-row">
+          <span>Voice</span>
+          <select id="ttsVoice">${voiceOptions}</select>
+        </label>
+
+        <label class="setting-row">
+          <span>Speed: <strong id="rateValue">${s.rate}</strong></span>
+          <input type="range" id="ttsRate" min="0.5" max="1.5" step="0.05" value="${s.rate}">
+        </label>
+
+        <label class="setting-row">
+          <span>Pitch: <strong id="pitchValue">${s.pitch}</strong></span>
+          <input type="range" id="ttsPitch" min="0.5" max="1.5" step="0.05" value="${s.pitch}">
+        </label>
+
+        <button type="button" class="btn btn-secondary" id="testVoice">
+          ${icons.play} Test voice
+        </button>
+        <p class="settings-hint" id="currentVoiceHint">Auto-selected: ${preferredVoice ? preferredVoice.name : 'loading…'}</p>
+      </div>
     `;
   }
 
@@ -596,11 +631,43 @@
       localStorage.removeItem(STORAGE_KEY);
       renderRoute(routes.find(r => $(`#route-${r}`).classList.contains('active')) || 'today');
     });
+
+    // TTS settings
+    document.body.addEventListener('change', (e) => {
+      const target = e.target;
+      if (target.id === 'ttsVoice' || target.id === 'ttsRate' || target.id === 'ttsPitch') {
+        const s = loadSettings();
+        if (target.id === 'ttsVoice') s.voiceURI = target.value;
+        if (target.id === 'ttsRate') s.rate = target.value;
+        if (target.id === 'ttsPitch') s.pitch = target.value;
+        saveSettings(s);
+        if (target.id === 'ttsRate') $('#rateValue').textContent = s.rate;
+        if (target.id === 'ttsPitch') $('#pitchValue').textContent = s.pitch;
+        refreshVoices();
+        if ($('#currentVoiceHint')) {
+          $('#currentVoiceHint').textContent = 'Auto-selected: ' + (preferredVoice ? preferredVoice.name : 'default');
+        }
+      }
+    });
+
+    document.body.addEventListener('click', (e) => {
+      if (e.target.closest('#testVoice')) {
+        e.preventDefault();
+        speak('Hello, this is your chosen voice on iPhone.');
+      }
+    });
   }
 
   function initRoute() {
     const hash = window.location.hash.replace('#', '');
     navigate(hash || 'today');
+  }
+
+  if ('speechSynthesis' in window) {
+    refreshVoices();
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = refreshVoices;
+    }
   }
 
   if ('serviceWorker' in navigator) {

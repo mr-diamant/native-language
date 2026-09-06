@@ -615,6 +615,63 @@ h1 {
   flex-direction: column;
   gap: 10px;
 }
+
+.settings-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+.settings-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--teal-900);
+  margin: 0 0 4px;
+}
+.settings-subtitle {
+  font-size: 14px;
+  color: var(--slate-500);
+  margin: 0 0 16px;
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 15px;
+  color: var(--slate-700);
+}
+.setting-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.setting-row select,
+.setting-row input[type="range"] {
+  flex: 1;
+  min-width: 0;
+}
+.setting-row select {
+  appearance: none;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 15px;
+  background: var(--slate-100);
+  color: var(--slate-900);
+}
+.setting-row input[type="range"] {
+  accent-color: var(--teal-600);
+}
+.settings-hint {
+  font-size: 13px;
+  color: var(--slate-500);
+  margin: 10px 0 0;
+}
+
 .file-label {
   display: inline-block;
 }
