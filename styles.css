@@ -649,21 +649,17 @@ h1 {
   gap: 6px;
   flex-shrink: 0;
 }
+.setting-label-text {
+  min-width: 90px;
+}
 .setting-row select,
 .setting-row input[type="range"] {
   flex: 1;
   min-width: 0;
 }
-.setting-row select {
-  appearance: none;
-  border: 1px solid var(--slate-200);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-size: 15px;
-  background: var(--slate-100);
-  color: var(--slate-900);
-}
 .setting-row input[type="range"] {
+  width: 140px;
+  flex: 0 0 140px;
   accent-color: var(--teal-600);
 }
 .settings-hint {

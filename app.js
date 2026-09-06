@@ -32,7 +32,7 @@
   }
 
   function defaultSettings() {
-    return { voiceURI: 'auto', rate: 0.9, pitch: 1.0 };
+    return { rate: 0.9, pitch: 1.0 };
   }
 
   function saveSettings(s) {
@@ -42,47 +42,19 @@
   function refreshVoices() {
     if (!window.speechSynthesis) return;
     voiceList = window.speechSynthesis.getVoices() || [];
-    const s = loadSettings();
-    preferredVoice = pickVoice(s.voiceURI, voiceList);
+    preferredVoice = pickSamantha(voiceList);
     if ($('#route-profile').classList.contains('active')) {
       renderProfile();
     }
   }
 
-  function isEnglish(voice) {
-    return /^en[-_]?/i.test(voice.lang || '');
-  }
-
-  function isIOS(voice) {
-    const uri = (voice.voiceURI || '').toLowerCase();
-    const name = (voice.name || '').toLowerCase();
-    return /siri|samantha|allison|aaron|nick|nicky|fred|victoria|daniel|karen|moira|tessa|serena|ava|kyoko|zuzana/.test(uri + name);
-  }
-
-  function rankVoice(voice) {
-    const uri = (voice.voiceURI || '').toLowerCase();
-    const name = (voice.name || '').toLowerCase();
-    let score = 0;
-    if (isEnglish(voice)) score += 100;
-    if (isIOS(voice)) score += 50;
-    if (/premium|enhanced|neural/.test(uri + name)) score += 80;
-    if (/siri/.test(uri + name)) score += 60;
-    if (/samantha/.test(name)) score += 40;
-    if (/en[-_]us/.test(voice.lang || '')) score += 20;
-    if (/en[-_]gb/.test(voice.lang || '')) score += 10;
-    if (voice.default) score -= 5;
-    return score;
-  }
-
-  function pickVoice(requestedURI, voices) {
-    if (requestedURI && requestedURI !== 'auto') {
-      const exact = voices.find(v => v.voiceURI === requestedURI || v.name === requestedURI);
-      if (exact) return exact;
-    }
+  function pickSamantha(voices) {
     if (!voices.length) return null;
-    const english = voices.filter(isEnglish);
-    const candidates = english.length ? english : voices;
-    return candidates.slice().sort((a, b) => rankVoice(b) - rankVoice(a))[0];
+    const samantha = voices.find(v => /samantha/i.test(v.name));
+    if (samantha) return samantha;
+    const enhanced = voices.find(v => /en[-_]us/i.test(v.lang) && /premium|enhanced|neural/i.test(v.name + ' ' + v.voiceURI));
+    if (enhanced) return enhanced;
+    return voices.find(v => /en[-_]us/i.test(v.lang)) || null;
   }
 
   function todayKey() {
@@ -381,7 +353,6 @@
     const todayUsed = today ? today.words.filter(w => w.used).length : 0;
     const streak = calculateStreak(data.days);
     const s = loadSettings();
-    const voices = voiceList.length ? voiceList : window.speechSynthesis?.getVoices() || [];
 
     $('#profileGrid').innerHTML = `
       <div class="stat-card"><div class="stat-value">${streak}</div><div class="stat-label">Streak days</div></div>
@@ -391,36 +362,25 @@
       <div class="stat-card"><div class="stat-value">${todayUsed}/${todayTotal}</div><div class="stat-label">Used today</div></div>
     `;
 
-    let voiceOptions = '<option value="auto">Auto (best iOS voice)</option>';
-    voices.forEach(v => {
-      const label = `${v.name} (${v.lang})`;
-      voiceOptions += `<option value="${escapeHtml(v.voiceURI)}" ${s.voiceURI === v.voiceURI ? 'selected' : ''}>${escapeHtml(label)}</option>`;
-    });
-
     $('#ttsSettings').innerHTML = `
       <div class="settings-card">
         <h3 class="settings-title">Voice settings</h3>
-        <p class="settings-subtitle">Optimized for iPhone. Pick the clearest English voice.</p>
+        <p class="settings-subtitle">Samantha voice is used for the best iPhone experience.</p>
 
         <label class="setting-row">
-          <span>Voice</span>
-          <select id="ttsVoice">${voiceOptions}</select>
-        </label>
-
-        <label class="setting-row">
-          <span>Speed: <strong id="rateValue">${s.rate}</strong></span>
+          <span class="setting-label-text">Speed: <strong id="rateValue">${s.rate}</strong></span>
           <input type="range" id="ttsRate" min="0.5" max="1.5" step="0.05" value="${s.rate}">
         </label>
 
         <label class="setting-row">
-          <span>Pitch: <strong id="pitchValue">${s.pitch}</strong></span>
+          <span class="setting-label-text">Pitch: <strong id="pitchValue">${s.pitch}</strong></span>
           <input type="range" id="ttsPitch" min="0.5" max="1.5" step="0.05" value="${s.pitch}">
         </label>
 
         <button type="button" class="btn btn-secondary" id="testVoice">
           ${icons.play} Test voice
         </button>
-        <p class="settings-hint" id="currentVoiceHint">Auto-selected: ${preferredVoice ? preferredVoice.name : 'loading…'}</p>
+        <p class="settings-hint" id="currentVoiceHint">Voice: ${preferredVoice ? preferredVoice.name : 'loading…'}</p>
       </div>
     `;
   }
@@ -636,20 +596,19 @@
     });
 
     // TTS settings
-    document.body.addEventListener('change', (e) => {
+    document.body.addEventListener('input', (e) => {
       const target = e.target;
-      if (target.id === 'ttsVoice' || target.id === 'ttsRate' || target.id === 'ttsPitch') {
+      if (target.id === 'ttsRate' || target.id === 'ttsPitch') {
         const s = loadSettings();
-        if (target.id === 'ttsVoice') s.voiceURI = target.value;
-        if (target.id === 'ttsRate') s.rate = target.value;
-        if (target.id === 'ttsPitch') s.pitch = target.value;
-        saveSettings(s);
-        if (target.id === 'ttsRate') $('#rateValue').textContent = s.rate;
-        if (target.id === 'ttsPitch') $('#pitchValue').textContent = s.pitch;
-        refreshVoices();
-        if ($('#currentVoiceHint')) {
-          $('#currentVoiceHint').textContent = 'Auto-selected: ' + (preferredVoice ? preferredVoice.name : 'default');
+        if (target.id === 'ttsRate') {
+          s.rate = target.value;
+          $('#rateValue').textContent = s.rate;
         }
+        if (target.id === 'ttsPitch') {
+          s.pitch = target.value;
+          $('#pitchValue').textContent = s.pitch;
+        }
+        saveSettings(s);
       }
     });
 
