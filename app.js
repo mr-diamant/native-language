@@ -395,8 +395,6 @@
   function renderProfile() {
     const s = loadSettings();
 
-    $('#profileGrid').innerHTML = '';
-
     $('#ttsSettings').innerHTML = `
       <div class="settings-card">
         <h3 class="settings-title">Voice settings</h3>
