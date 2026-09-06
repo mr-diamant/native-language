@@ -12,7 +12,8 @@
     check: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg>',
     x: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>',
     clipboard: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>',
-    magic: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-magic"></use></svg>'
+    magic: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-magic"></use></svg>',
+    hourglass: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-hourglass"></use></svg>'
   };
 
   function todayKey() {
@@ -163,7 +164,7 @@
           <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.speaker}</button>
         </div>
         <div class="word-meta">
-          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' Used today' : '⏳ Not used yet'}</span>
+          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' Used today' : icons.hourglass + ' Not used yet'}</span>
           <span class="word-status not-used">${w.sentences.length} sentence${w.sentences.length === 1 ? '' : 's'}</span>
         </div>
       </div>
@@ -289,7 +290,7 @@
               <div class="base-word">
                 <div class="base-word-head">
                   <span class="base-word-term">${escapeHtml(w.term)}</span>
-                  <span class="base-word-status ${w.used ? '' : 'inactive'}">${w.used ? icons.check + ' used' : '⏳ not used'}</span>
+                  <span class="base-word-status ${w.used ? '' : 'inactive'}">${w.used ? icons.check + ' used' : icons.hourglass + ' not used'}</span>
                 </div>
                 ${w.sentences.length ? `<ul class="base-sentences">${w.sentences.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : '<p style="margin:4px 0 0;font-size:14px;color:var(--slate-500);">No sentences yet.</p>'}
               </div>
