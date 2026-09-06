@@ -6,7 +6,7 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(204);
@@ -20,9 +20,28 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 if (file_exists(__DIR__ . '/config.local.php')) {
-  require __DIR__ . '/config.local.php';
+    require __DIR__ . '/config.local.php';
 } else {
-  require __DIR__ . '/config.php';
+    require __DIR__ . '/config.php';
+}
+
+function validateToken() {
+    if (!defined('JWT_SECRET')) return false;
+    $auth = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    if (!$auth || !preg_match('/Bearer\s+(\S+)/', $auth, $m)) return false;
+    $parts = explode('.', $m[1]);
+    if (count($parts) !== 3) return false;
+    $signature = hash_hmac('sha256', $parts[0] . '.' . $parts[1], JWT_SECRET, true);
+    if (!hash_equals(base64_decode(strtr($parts[2], '-_', '+/') . str_repeat('=', (4 - strlen($parts[2]) % 4) % 4)), $signature)) return false;
+    $payload = json_decode(base64_decode(strtr($parts[1], '-_', '+/') . str_repeat('=', (4 - strlen($parts[1]) % 4) % 4)), true);
+    if (empty($payload['exp']) || $payload['exp'] < time()) return false;
+    return true;
+}
+
+if (!validateToken()) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Unauthorized']);
+    exit;
 }
 
 $input = json_decode(file_get_contents('php://input'), true);

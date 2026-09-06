@@ -1,4 +1,4 @@
-const CACHE_NAME = 'native-language-v8';
+const CACHE_NAME = 'native-language-v9';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './manifest.json',
   './icons.svg',
   './api.php',
+  './login.php',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon.svg',

@@ -10,10 +10,26 @@
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
-  <div id="app">
+  <div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+      <div class="logo" aria-label="Native Language">
+        <span class="logo-icon" aria-hidden="true">🌐</span>
+        <span class="logo-text">Native Language</span>
+      </div>
+      <p class="login-subtitle">Sign in to continue learning</p>
+      <form id="loginForm" class="login-form">
+        <input type="email" id="loginEmail" class="login-input" placeholder="Email" required autocomplete="email" value="tau1kz@gmail.com">
+        <input type="password" id="loginPassword" class="login-input" placeholder="Password" required autocomplete="current-password">
+        <p class="login-error" id="loginError"></p>
+        <button type="submit" class="cta login-cta">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
     <header class="app-header">
       <div class="logo" aria-label="Native Language">
         <span class="logo-icon" aria-hidden="true">🌐</span>
@@ -129,6 +145,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=8" defer></script>
+  <script src="app.js?v=9" defer></script>
 </body>
 </html>

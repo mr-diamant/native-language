@@ -786,3 +786,63 @@ h1 {
   .practice-word { font-size: 24px; }
   .btn-icon { width: 42px; height: 42px; }
 }
+
+
+/* Login overlay */
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(160deg, var(--teal-50) 0%, var(--white) 60%);
+}
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.login-card .logo {
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.login-subtitle {
+  font-size: 15px;
+  color: var(--slate-600);
+  margin: 0 0 22px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.login-input {
+  appearance: none;
+  border: 1px solid var(--slate-200);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 16px;
+  background: var(--white);
+  color: var(--slate-900);
+}
+.login-input:focus {
+  outline: none;
+  border-color: var(--teal-600);
+  box-shadow: 0 0 0 3px var(--teal-100);
+}
+.login-error {
+  min-height: 18px;
+  font-size: 13px;
+  color: var(--red-600);
+  margin: 0;
+}
+.login-cta {
+  width: 100%;
+  margin-top: 4px;
+}

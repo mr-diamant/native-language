@@ -139,11 +139,74 @@
     }
   }
 
+
+  const AUTH_TOKEN_KEY = 'native-language-auth-v1';
+
+  function base64UrlDecode(str) {
+    str += new Array((4 - str.length % 4) % 4 + 1).join('=');
+    return atob(str.replace(/-/g, '+').replace(/_/g, '/'));
+  }
+
+  function parseJwt(token) {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      return JSON.parse(base64UrlDecode(parts[1]));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function isTokenValid() {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!token) return false;
+    const payload = parseJwt(token);
+    return !!payload && payload.exp * 1000 > Date.now();
+  }
+
+  function getAuthHeaders() {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    return token ? { 'Authorization': 'Bearer ' + token } : {};
+  }
+
+  function showApp() {
+    $('#loginOverlay').classList.add('hidden');
+    $('#app').classList.remove('hidden');
+    initRoute();
+  }
+
+  function showLogin(error = '') {
+    $('#loginOverlay').classList.remove('hidden');
+    $('#app').classList.add('hidden');
+    $('#loginError').textContent = error;
+  }
+
+  async function login(email, password) {
+    try {
+      const res = await fetch('login.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const json = await res.json();
+      if (!res.ok || !json.token) {
+        showLogin(json.error || 'Sign in failed');
+        return false;
+      }
+      localStorage.setItem(AUTH_TOKEN_KEY, json.token);
+      showApp();
+      return true;
+    } catch (e) {
+      showLogin('Network error');
+      return false;
+    }
+  }
+
   async function generateSentences(term) {
     try {
       const res = await fetch('api.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({ word: term, count: 3 })
       });
       const json = await res.json();
@@ -707,5 +770,21 @@
   window.addEventListener('popstate', initRoute);
 
   bindEvents();
-  initRoute();
+
+  function init() {
+    if (isTokenValid()) {
+      showApp();
+    } else {
+      showLogin();
+    }
+
+    $('#loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = $('#loginEmail').value.trim();
+      const password = $('#loginPassword').value;
+      login(email, password);
+    });
+  }
+
+  init();
 })();
