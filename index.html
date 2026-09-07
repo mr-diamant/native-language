@@ -10,7 +10,7 @@
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
   <div id="loginOverlay" class="login-overlay">
@@ -21,7 +21,7 @@
       </div>
       <p class="login-subtitle">Sign in to continue learning</p>
       <form id="loginForm" class="login-form">
-        <input type="email" id="loginEmail" class="login-input" placeholder="Email" required autocomplete="email" value="tau1kz@gmail.com">
+        <input type="email" id="loginEmail" class="login-input" placeholder="Email" required autocomplete="email">
         <input type="password" id="loginPassword" class="login-input" placeholder="Password" required autocomplete="current-password">
         <p class="login-error" id="loginError"></p>
         <button type="submit" class="cta login-cta">Sign in</button>
@@ -127,8 +127,40 @@
 
       <section id="route-profile" class="route">
         <h1>Profile</h1>
-        <p class="section-subtitle">Voice settings and data backup.</p>
+        <p class="section-subtitle">Account, voice settings and data backup.</p>
+
+        <div class="profile-head">
+          <label class="avatar-upload" aria-label="Change avatar">
+            <input type="file" id="avatarInput" accept="image/*" hidden>
+            <img id="avatarImg" src="" alt="Avatar" class="avatar-img hidden">
+            <div id="avatarPlaceholder" class="avatar-placeholder">
+              <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-user"></use></svg>
+              <span>Tap to add photo</span>
+            </div>
+          </label>
+          <p id="profileEmail" class="profile-email"></p>
+        </div>
+
+        <div class="settings-card">
+          <h3 class="settings-title">Change password</h3>
+          <p class="settings-subtitle">Update your account password.</p>
+          <form id="changePasswordForm" class="profile-form">
+            <input type="password" id="currentPassword" class="login-input" placeholder="Current password" required autocomplete="current-password">
+            <input type="password" id="newPassword" class="login-input" placeholder="New password" required autocomplete="new-password">
+            <p id="changePasswordError" class="login-error"></p>
+            <p id="changePasswordSuccess" class="profile-success"></p>
+            <button type="submit" class="cta">Update password</button>
+          </form>
+        </div>
+
         <div id="ttsSettings"></div>
+
+        <div class="settings-card">
+          <h3 class="settings-title">Account</h3>
+          <p class="settings-subtitle">Sign out to switch accounts.</p>
+          <button class="btn btn-danger" id="signOutBtn" type="button">Sign out</button>
+        </div>
+
         <div class="profile-actions">
           <button class="btn btn-secondary" id="exportData" type="button">Export JSON</button>
           <label class="btn btn-secondary file-label">
@@ -145,6 +177,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=9" defer></script>
+  <script src="app.js?v=10" defer></script>
 </body>
 </html>

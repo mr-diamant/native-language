@@ -27,4 +27,7 @@
   <symbol id="icon-chevron-down" viewBox="0 0 256 256" fill="currentColor">
     <path d="M205.7 93.7a8 8 0 0 0-11.3 0L128 160.1 61.7 93.7a8 8 0 0 0-11.3 11.3l72 72a8 8 0 0 0 11.3 0l72-72a8 8 0 0 0 0-11.3Z"/>
   </symbol>
+  <symbol id="icon-user" viewBox="0 0 256 256" fill="currentColor">
+    <path d="M230.9 212a124 124 0 0 0-205.8 0 8 8 0 0 0 13.2 9 108 108 0 0 1 179.4 0 8 8 0 1 0 13.2-9ZM128 40a40 40 0 1 0 40 40 40 40 0 0 0-40-40Zm0 64a24 24 0 1 1 24-24 24 24 0 0 1-24 24Z"/>
+  </symbol>
 </svg>

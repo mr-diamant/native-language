@@ -141,6 +141,7 @@
 
 
   const AUTH_TOKEN_KEY = 'native-language-auth-v1';
+  const AVATAR_KEY = 'native-language-avatar-v1';
 
   function base64UrlDecode(str) {
     str += new Array((4 - str.length % 4) % 4 + 1).join('=');
@@ -167,6 +168,13 @@
   function getAuthHeaders() {
     const token = localStorage.getItem(AUTH_TOKEN_KEY);
     return token ? { 'Authorization': 'Bearer ' + token } : {};
+  }
+
+  function getAuthEmail() {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!token) return '';
+    const payload = parseJwt(token);
+    return payload?.sub || '';
   }
 
   function showApp() {
@@ -457,6 +465,25 @@
 
   function renderProfile() {
     const s = loadSettings();
+    const email = getAuthEmail();
+
+    const avatar = localStorage.getItem(AVATAR_KEY) || '';
+    const avatarImg = $('#avatarImg');
+    const avatarPlaceholder = $('#avatarPlaceholder');
+    const profileEmail = $('#profileEmail');
+    if (avatarImg) {
+      avatarImg.src = avatar;
+      avatarImg.classList.toggle('hidden', !avatar);
+    }
+    if (avatarPlaceholder) {
+      avatarPlaceholder.classList.toggle('hidden', !!avatar);
+    }
+    if (profileEmail) {
+      profileEmail.textContent = email;
+    }
+
+    $('#changePasswordError').textContent = '';
+    $('#changePasswordSuccess').textContent = '';
 
     $('#ttsSettings').innerHTML = `
       <div class="settings-card">
@@ -745,6 +772,58 @@
         speak('Hello, this is your chosen voice on iPhone.');
       }
     });
+
+    // Avatar upload
+    const avatarInput = $('#avatarInput');
+    if (avatarInput) {
+      avatarInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          localStorage.setItem(AVATAR_KEY, reader.result);
+          renderProfile();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Change password
+    const changePasswordForm = $('#changePasswordForm');
+    if (changePasswordForm) {
+      changePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        $('#changePasswordError').textContent = '';
+        $('#changePasswordSuccess').textContent = '';
+        const current = $('#currentPassword').value;
+        const newPass = $('#newPassword').value;
+        try {
+          const res = await fetch('change-password.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+            body: JSON.stringify({ currentPassword: current, newPassword: newPass })
+          });
+          const json = await res.json();
+          if (!res.ok) {
+            $('#changePasswordError').textContent = json.error || 'Failed to update password';
+            return;
+          }
+          $('#changePasswordSuccess').textContent = 'Password updated. Please sign in again.';
+          changePasswordForm.reset();
+        } catch (err) {
+          $('#changePasswordError').textContent = 'Network error';
+        }
+      });
+    }
+
+    // Sign out
+    const signOutBtn = $('#signOutBtn');
+    if (signOutBtn) {
+      signOutBtn.addEventListener('click', () => {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        showLogin();
+      });
+    }
   }
 
   function initRoute() {
