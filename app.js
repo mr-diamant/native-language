@@ -217,6 +217,11 @@
         headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
         body: JSON.stringify({ word: term, count: 3 })
       });
+      if (res.status === 401) {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        showLogin('Session expired. Please sign in again.');
+        return [];
+      }
       const json = await res.json();
       if (json.sentences && json.sentences.length) return json.sentences;
     } catch (e) {
@@ -805,6 +810,14 @@
           });
           const json = await res.json();
           if (!res.ok) {
+            if (res.status === 401) {
+              $('#changePasswordError').textContent = 'Session expired. Please sign in again.';
+              setTimeout(() => {
+                localStorage.removeItem(AUTH_TOKEN_KEY);
+                showLogin();
+              }, 1500);
+              return;
+            }
             $('#changePasswordError').textContent = json.error || 'Failed to update password';
             return;
           }

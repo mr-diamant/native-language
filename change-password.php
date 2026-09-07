@@ -77,4 +77,8 @@ if (file_put_contents($path, $content) === false) {
     exit;
 }
 
+if (function_exists('opcache_invalidate')) {
+    opcache_invalidate($path, true);
+}
+
 echo json_encode(['success' => true]);
