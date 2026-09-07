@@ -343,7 +343,7 @@
   function sentenceHtml(text, wordIndex, sentenceIndex) {
     return `
       <div class="sentence-item">
-        <span class="sentence-text">${escapeHtml(text)}</span>
+        <span class="sentence-text" data-copy="${escapeHtml(text)}" role="button" tabindex="0" aria-label="Copy sentence">${escapeHtml(text)}</span>
         <div class="sentence-actions">
           <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(text)}" type="button" aria-label="Speak">${icons.play}</button>
           <button class="btn btn-icon btn-danger" data-action="delete-sentence" data-word="${wordIndex}" data-sentence="${sentenceIndex}" type="button" aria-label="Delete">${icons.x}</button>
@@ -533,6 +533,40 @@
     return streak;
   }
 
+  async function copyText(text) {
+    if (!text) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      showCopyToast('Copied');
+    } catch (err) {
+      console.error('Copy failed', err);
+    }
+  }
+
+  function showCopyToast(message) {
+    let toast = $('#copyToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'copyToast';
+      toast.className = 'copy-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1500);
+  }
+
   function escapeHtml(str) {
     return String(str ?? '')
       .replace(/&/g, '&amp;')
@@ -580,6 +614,12 @@
       if (speakBtn) {
         e.preventDefault();
         speak(speakBtn.dataset.speak);
+      }
+
+      const copyEl = e.target.closest('[data-copy]');
+      if (copyEl) {
+        e.preventDefault();
+        copyText(copyEl.dataset.copy);
       }
 
       const markUsedBtn = e.target.closest('[data-action="mark-used"]');

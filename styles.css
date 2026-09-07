@@ -367,7 +367,34 @@ h1 {
   font-size: 15px;
   color: var(--slate-800);
   line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 6px 0;
+  border-radius: 6px;
+  transition: background 0.15s;
 }
+.sentence-text:active {
+  background: var(--teal-50);
+}
+.copy-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--slate-800);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 18px;
+  border-radius: 999px;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+.copy-toast.show { opacity: 1; }
 .sentence-actions { display: flex; gap: 4px; }
 
 .add-sentence-form {
