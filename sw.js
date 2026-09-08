@@ -1,9 +1,9 @@
-const CACHE_NAME = 'native-language-v12';
+const CACHE_NAME = 'native-language-v13';
 const ASSETS = [
   './',
   './index.html',
-  './styles.css?v=12',
-  './app.js?v=12',
+  './styles.css?v=13',
+  './app.js?v=13',
   './manifest.json',
   './icons.svg',
   './api.php',

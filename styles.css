@@ -274,8 +274,8 @@ h1 {
   justify-content: center;
 }
 .btn-icon .icon {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
 }
 
 .icon {
@@ -284,6 +284,10 @@ h1 {
   display: inline-block;
   vertical-align: middle;
   flex-shrink: 0;
+}
+.icon-play {
+  width: 20px;
+  height: 20px;
 }
 .icon-small {
   width: 14px;
@@ -304,6 +308,9 @@ h1 {
   align-items: center;
   gap: 12px;
   margin-bottom: 14px;
+}
+.word-card-head .btn-icon {
+  margin-left: auto;
 }
 .word-title {
   flex: 1;
@@ -395,7 +402,7 @@ h1 {
   pointer-events: none;
 }
 .copy-toast.show { opacity: 1; }
-.sentence-actions { display: flex; gap: 4px; }
+.sentence-actions { display: flex; gap: 4px; align-items: center; }
 
 .add-sentence-form {
   display: flex;
@@ -503,11 +510,17 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+  align-items: center;
 }
 .practice-actions .btn .icon {
   width: 16px;
   height: 16px;
   margin-right: 4px;
+}
+.practice-actions .btn-icon .icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0;
 }
 
 /* Dictionary */
@@ -567,9 +580,11 @@ h1 {
 .dic-toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   margin-bottom: 12px;
+}
+.dic-toolbar .btn-icon {
+  margin-left: auto;
 }
 .dic-sentences {
   list-style: none;
@@ -589,6 +604,9 @@ h1 {
   font-size: 15px;
   color: var(--slate-800);
   line-height: 1.4;
+}
+.dic-sentence span {
+  flex: 1;
 }
 .dic-sentence .dic-speak {
   flex-shrink: 0;
@@ -844,6 +862,9 @@ h1 {
   font-size: 13px;
   color: var(--slate-500);
   margin: 10px 0 0;
+}
+#testVoice {
+  margin-top: 8px;
 }
 
 .file-label {

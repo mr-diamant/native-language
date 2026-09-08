@@ -9,12 +9,12 @@
   function $$(selector, root = document) { return Array.from(root.querySelectorAll(selector)); }
 
   const icons = {
-    play: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-play"></use></svg>',
-    check: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg>',
+    play: '<svg class="icon icon-play" aria-hidden="true"><use href="icons.svg#icon-play"></use></svg>',
+    check: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg>',
     x: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>',
     clipboard: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>',
     textbox: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-textbox"></use></svg>',
-    hourglass: '<svg class="icon icon-small" aria-hidden="true"><use href="icons.svg#icon-hourglass"></use></svg>'
+    hourglass: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-hourglass"></use></svg>'
   };
 
   let voiceList = [];
@@ -370,7 +370,7 @@
         <p class="practice-word">${escapeHtml(w.term)}</p>
         <p class="practice-hint">Make a sentence with this word and say it aloud.</p>
         <div class="practice-actions">
-          <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.play} Listen</button>
+          <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.play}</button>
           <button class="btn btn-primary btn-small" data-action="mark-used" data-index="${i}" type="button">${icons.check} I said it</button>
         </div>
       </div>
@@ -444,8 +444,8 @@
       const sentencesHtml = w.sentences.length
         ? w.sentences.map((s, si) => `
             <li class="dic-sentence">
-              <button class="btn btn-icon btn-ghost dic-speak" data-speak="${escapeHtml(s)}" type="button" aria-label="Speak">${icons.play}</button>
               <span>${escapeHtml(s)}</span>
+              <button class="btn btn-icon btn-secondary dic-speak" data-speak="${escapeHtml(s)}" type="button" aria-label="Speak">${icons.play}</button>
             </li>
           `).join('')
         : '<li class="dic-empty-sentences">No sentences yet.</li>';
@@ -458,7 +458,7 @@
           </button>
           <div class="dic-body hidden">
             <div class="dic-toolbar">
-              <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.play} Listen</button>
+              <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.play}</button>
             </div>
             <ul class="dic-sentences">${sentencesHtml}</ul>
           </div>
@@ -504,9 +504,10 @@
           <input type="range" id="ttsPitch" min="0.5" max="1.5" step="0.05" value="${s.pitch}">
         </label>
 
-        <button type="button" class="btn btn-secondary" id="testVoice">
-          ${icons.play} Test voice
+        <button type="button" class="btn btn-icon btn-secondary" id="testVoice" aria-label="Test voice">
+          ${icons.play}
         </button>
+        <span class="settings-hint">Tap the button to hear your current voice settings.</span>
         <p class="settings-hint" id="currentVoiceHint">Voice: ${preferredVoice ? preferredVoice.name : 'loading…'}</p>
       </div>
     `;
