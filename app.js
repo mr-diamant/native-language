@@ -459,7 +459,6 @@
           <div class="dic-body hidden">
             <div class="dic-toolbar">
               <button class="btn btn-secondary btn-small" data-speak="${escapeHtml(w.term)}" type="button">${icons.play} Listen</button>
-              <span class="dic-date">Added ${formatDate(w.date)}</span>
             </div>
             <ul class="dic-sentences">${sentencesHtml}</ul>
           </div>
