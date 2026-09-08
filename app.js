@@ -12,6 +12,7 @@
     play: '<svg class="icon icon-play" aria-hidden="true"><use href="icons.svg#icon-play"></use></svg>',
     check: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg>',
     x: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>',
+    plus: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-plus"></use></svg>',
     clipboard: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>',
     textbox: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-textbox"></use></svg>',
     hourglass: '<svg class="icon" aria-hidden="true"><use href="icons.svg#icon-hourglass"></use></svg>'
@@ -696,7 +697,22 @@
         ensureWords(day, terms);
         saveData(data);
         form.reset();
+        renderToday();
         navigate('words');
+        return;
+      }
+
+      if (form.id === 'todayAddMoreForm') {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const term = fd.get('extraWord')?.trim();
+        if (!term) return;
+        const data = loadData();
+        const { day } = getOrCreateToday(data);
+        ensureWords(day, [term]);
+        saveData(data);
+        form.reset();
+        renderToday();
         return;
       }
 

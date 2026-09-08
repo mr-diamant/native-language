@@ -10,7 +10,7 @@
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=12">
+  <link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body>
   <div id="loginOverlay" class="login-overlay">
@@ -47,11 +47,11 @@
     <main id="main" class="main-content">
       <section id="route-today" class="route active">
         <div class="today-header">
-          <h1>Today's 3 words</h1>
+          <h1>Today's words</h1>
           <p class="today-date" id="todayDate"></p>
         </div>
         <div id="todayEmpty" class="today-empty">
-          <p class="empty-title">Which 3 English words are you learning today?</p>
+          <p class="empty-title">Which English words are you learning today?</p>
           <form id="todayForm" class="today-form">
             <div class="word-field">
               <div class="input-with-clear">
@@ -66,7 +66,7 @@
             </div>
             <div class="word-field">
               <div class="input-with-clear">
-                <input type="text" name="word2" class="word-input" placeholder="e.g. world" required autocomplete="off" autocapitalize="off">
+                <input type="text" name="word2" class="word-input" placeholder="e.g. world" autocomplete="off" autocapitalize="off">
                 <button type="button" class="input-clear" data-clear="word2" aria-label="Clear">
                   <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>
                 </button>
@@ -77,7 +77,7 @@
             </div>
             <div class="word-field">
               <div class="input-with-clear">
-                <input type="text" name="word3" class="word-input" placeholder="e.g. friend" required autocomplete="off" autocapitalize="off">
+                <input type="text" name="word3" class="word-input" placeholder="e.g. friend" autocomplete="off" autocapitalize="off">
                 <button type="button" class="input-clear" data-clear="word3" aria-label="Clear">
                   <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>
                 </button>
@@ -86,11 +86,27 @@
                 <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>
               </button>
             </div>
-            <button type="submit" class="cta">Save 3 words</button>
+            <button type="submit" class="cta">Save words</button>
           </form>
         </div>
         <div id="todayWords" class="today-words hidden">
           <div class="word-list" id="todayWordList"></div>
+          <form id="todayAddMoreForm" class="today-add-more">
+            <div class="word-field">
+              <div class="input-with-clear">
+                <input type="text" name="extraWord" class="word-input" placeholder="Add one more word" autocomplete="off" autocapitalize="off">
+                <button type="button" class="input-clear" data-clear="extraWord" aria-label="Clear">
+                  <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-x"></use></svg>
+                </button>
+              </div>
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste="extraWord" aria-label="Paste">
+                <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-clipboard"></use></svg>
+              </button>
+              <button type="submit" class="btn btn-primary btn-icon" aria-label="Add word">
+                <svg class="icon" aria-hidden="true"><use href="icons.svg#icon-plus"></use></svg>
+              </button>
+            </div>
+          </form>
           <div class="today-actions">
             <button class="btn btn-primary" data-route="words" type="button">Add sentences</button>
             <button class="btn btn-secondary" data-route="dic" type="button">Dictionary</button>
@@ -177,6 +193,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=13" defer></script>
+  <script src="app.js?v=14" defer></script>
 </body>
 </html>
