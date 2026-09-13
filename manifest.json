@@ -4,8 +4,8 @@
   "description": "Daily English practice tool: 3 words, many sentences, native speech.",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0F766E",
+  "background_color": "#FFF6F2",
+  "theme_color": "#fb916e",
   "orientation": "portrait",
   "lang": "en",
   "icons": [

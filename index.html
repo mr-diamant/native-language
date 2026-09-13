@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#0F766E">
+  <meta name="theme-color" content="#fb916e">
   <meta name="description" content="Native Language — daily English practice tool.">
   <title>Native Language</title>
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="icons/favicon.ico" sizes="any">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
-  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="styles.css?v=16">
 </head>
 <body>
   <div id="loginOverlay" class="login-overlay">
     <div class="login-card">
       <div class="logo" aria-label="Native Language">
-        <span class="logo-icon" aria-hidden="true">🌐</span>
+        <img class="logo-img" src="icons/icon-512.png?v=2" alt="" width="36" height="36">
         <span class="logo-text">Native Language</span>
       </div>
       <p class="login-subtitle">Sign in to continue learning</p>
@@ -32,7 +32,7 @@
   <div id="app" class="hidden">
     <header class="app-header">
       <div class="logo" aria-label="Native Language">
-        <span class="logo-icon" aria-hidden="true">🌐</span>
+        <img class="logo-img" src="icons/icon-512.png?v=2" alt="" width="32" height="32">
         <span class="logo-text">Native</span>
       </div>
       <nav class="main-nav" id="mainNav" aria-label="Navigation">
@@ -154,7 +154,42 @@
               <span>Tap to add photo</span>
             </div>
           </label>
+          <p id="profileNameDisplay" class="profile-name"></p>
           <p id="profileEmail" class="profile-email"></p>
+        </div>
+
+        <!-- Avatar cropper modal -->
+        <div id="avatarCropModal" class="crop-modal hidden">
+          <div class="crop-card">
+            <h3 class="settings-title">Crop avatar</h3>
+            <div class="crop-stage" id="cropStage">
+              <img id="cropImage" src="" alt="Crop preview">
+              <div class="crop-overlay"></div>
+              <div class="crop-frame" id="cropFrame">
+                <div class="crop-frame-inner"></div>
+              </div>
+            </div>
+
+            <label class="crop-zoom-row">
+              <span>Zoom</span>
+              <input type="range" id="cropZoom" min="0.5" max="3" step="0.01" value="1">
+            </label>
+
+            <div class="crop-actions">
+              <button type="button" class="btn btn-secondary" id="cropCancel">Cancel</button>
+              <button type="button" class="cta" id="cropSave">Save</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-card">
+          <h3 class="settings-title">Profile info</h3>
+          <p class="settings-subtitle">Your name and account email.</p>
+          <form id="profileInfoForm" class="profile-form">
+            <input type="text" id="profileName" class="login-input" placeholder="Your name" autocomplete="name">
+            <p id="profileNameError" class="login-error"></p>
+            <button type="submit" class="cta">Save name</button>
+          </form>
         </div>
 
         <div class="settings-card">
@@ -193,6 +228,6 @@
     </footer>
   </div>
 
-  <script src="app.js?v=15" defer></script>
+  <script src="app.js?v=16" defer></script>
 </body>
 </html>
