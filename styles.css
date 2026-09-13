@@ -837,6 +837,17 @@ h1 {
   color: var(--green-700);
   margin: 0;
 }
+#changePasswordError:empty,
+#changePasswordSuccess:empty,
+#profileNameError:empty {
+  display: none;
+}
+#changePasswordError:not(:empty),
+#changePasswordSuccess:not(:empty),
+#profileNameError:not(:empty) {
+  min-height: 18px;
+  margin: 2px 0;
+}
 
 .profile-actions {
   display: flex;
