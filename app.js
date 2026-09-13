@@ -337,12 +337,16 @@
           <div class="sentences-list" id="sentences-${i}">
             ${w.sentences.length ? w.sentences.map((s, si) => sentenceHtml(s, i, si)).join('') : '<p style="margin:0;color:var(--slate-500);font-size:14px;">No sentences yet.</p>'}
           </div>
-          <form class="add-sentence-form" data-action="sentence" data-index="${i}">
-            <div class="input-with-clear">
-              <input type="text" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
-              <button type="button" class="input-clear" data-clear-sentence aria-label="Clear">${icons.x}</button>
+          <form class="add-sentence-form word-field" data-action="sentence" data-index="${i}">
+            <label class="word-field-label" for="sentence-input-${i}">Add sentence</label>
+            <div class="word-field-row">
+              <div class="input-with-clear">
+                <input id="sentence-input-${i}" type="text" class="word-input sentence-input" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
+                <button type="button" class="input-clear" data-clear-sentence aria-label="Clear">${icons.x}</button>
+              </div>
+              <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste-sentence aria-label="Paste">${icons.clipboard}</button>
+              <button type="submit" class="btn btn-primary btn-icon" aria-label="Add sentence">${icons.plus}</button>
             </div>
-            <button type="submit" class="btn btn-primary btn-small">+ Add</button>
           </form>
         </div>
 
@@ -641,6 +645,20 @@
       if (pasteBtn) {
         e.preventDefault();
         pasteToInput(pasteBtn.dataset.paste);
+      }
+
+      const pasteSentenceBtn = e.target.closest('[data-paste-sentence]');
+      if (pasteSentenceBtn) {
+        e.preventDefault();
+        const input = pasteSentenceBtn.closest('.word-field')?.querySelector('.sentence-input');
+        if (input && navigator.clipboard) {
+          navigator.clipboard.readText().then((text) => {
+            if (text) {
+              input.value = text.trim();
+              input.focus();
+            }
+          }).catch(() => {});
+        }
       }
 
       const speakBtn = e.target.closest('[data-speak]');

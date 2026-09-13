@@ -492,7 +492,19 @@ h1 {
 
 .add-sentence-form {
   display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.add-sentence-form .word-field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate-600);
+  margin-left: 4px;
+}
+.add-sentence-form .word-field-row {
+  display: flex;
   gap: 8px;
+  align-items: center;
 }
 .add-sentence-form .input-with-clear {
   flex: 1;
