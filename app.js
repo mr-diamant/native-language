@@ -341,7 +341,7 @@
             <label class="word-field-label" for="sentence-input-${i}">Add sentence</label>
             <div class="word-field-row">
               <div class="input-with-clear">
-                <input id="sentence-input-${i}" type="text" class="word-input sentence-input" placeholder="Type your own sentence" required autocomplete="off" autocapitalize="sentences">
+                <input id="sentence-input-${i}" type="text" class="word-input sentence-input" placeholder="Add one more sentence" required autocomplete="off" autocapitalize="sentences">
                 <button type="button" class="input-clear" data-clear-sentence aria-label="Clear">${icons.x}</button>
               </div>
               <button type="button" class="btn btn-icon btn-secondary paste-btn" data-paste-sentence aria-label="Paste">${icons.clipboard}</button>
