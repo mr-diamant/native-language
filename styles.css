@@ -490,12 +490,20 @@ h1 {
   transform: none;
 }
 
+.word-card-head .btn-icon {
+  margin-right: 32px;
+}
+.input-with-clear input {
+  border-radius: 999px;
+}
 .add-sentence-form {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  align-items: normal;
 }
 .add-sentence-form .word-field-label {
+  display: none;
   font-size: 13px;
   font-weight: 600;
   color: var(--slate-600);
