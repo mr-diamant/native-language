@@ -675,9 +675,12 @@ h1 {
   cursor: pointer;
 }
 .dic-word {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 800;
   color: #000;
+}
+.word-card-head .btn-icon {
+  margin-right: 30px;
 }
 .dic-chevron {
   width: 18px;
