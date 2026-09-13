@@ -641,10 +641,20 @@
         e.preventDefault();
         const body = dicHeader.nextElementSibling;
         const isOpen = !body.classList.contains('hidden');
-        body.classList.toggle('hidden', isOpen);
-        dicHeader.setAttribute('aria-expanded', String(!isOpen));
-        const chevron = dicHeader.querySelector('.dic-chevron');
-        if (chevron) chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+
+        $$('.dic-body').forEach(b => b.classList.add('hidden'));
+        $$('.dic-header').forEach(h => {
+          h.setAttribute('aria-expanded', 'false');
+          const c = h.querySelector('.dic-chevron');
+          if (c) c.style.transform = 'rotate(0deg)';
+        });
+
+        if (!isOpen) {
+          body.classList.remove('hidden');
+          dicHeader.setAttribute('aria-expanded', 'true');
+          const chevron = dicHeader.querySelector('.dic-chevron');
+          if (chevron) chevron.style.transform = 'rotate(180deg)';
+        }
       }
 
       const dicClear = e.target.closest('#dicSearchClear');
