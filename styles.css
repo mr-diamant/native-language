@@ -605,9 +605,9 @@ h1 {
   cursor: pointer;
 }
 .dic-word {
-  font-size: 20px;
+  font-size: 14px;
   font-weight: 800;
-  color: var(--primary-900);
+  color: #000;
 }
 .dic-chevron {
   width: 18px;
@@ -642,12 +642,13 @@ h1 {
   padding: 10px 12px;
   background: var(--slate-100);
   border-radius: var(--radius-sm);
-  font-size: 15px;
-  color: var(--slate-800);
+  font-size: 14px;
+  color: #000;
   line-height: 1.4;
 }
 .dic-sentence span {
   flex: 1;
+  color: #000;
 }
 .dic-sentence .sentence-text {
   cursor: pointer;
@@ -657,16 +658,18 @@ h1 {
   padding: 6px 0;
   border-radius: 6px;
   transition: background 0.15s;
+  color: #000;
 }
 .dic-sentence .sentence-text:active {
   background: var(--primary-50);
+  color: #000;
 }
 .dic-sentence .dic-speak {
   flex-shrink: 0;
   margin-top: -2px;
 }
 .dic-empty-sentences {
-  color: var(--slate-500);
+  color: #000;
   font-size: 14px;
   padding: 4px 0;
 }
