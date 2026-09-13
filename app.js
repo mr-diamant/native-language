@@ -794,15 +794,19 @@
       const del = e.target.closest('[data-action="delete-sentence"]');
       if (del) {
         e.preventDefault();
-        const data = loadData();
-        const { day } = getOrCreateToday(data);
-        const wIdx = Number(del.dataset.word);
-        const sIdx = Number(del.dataset.sentence);
-        if (day.words[wIdx]) {
-          day.words[wIdx].sentences.splice(sIdx, 1);
-          saveData(data);
-          renderWords();
-        }
+        const item = del.closest('.sentence-item');
+        if (item) item.classList.add('removing');
+        setTimeout(() => {
+          const data = loadData();
+          const { day } = getOrCreateToday(data);
+          const wIdx = Number(del.dataset.word);
+          const sIdx = Number(del.dataset.sentence);
+          if (day.words[wIdx]) {
+            day.words[wIdx].sentences.splice(sIdx, 1);
+            saveData(data);
+            renderWords();
+          }
+        }, 250);
       }
     });
 

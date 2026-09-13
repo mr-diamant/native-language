@@ -409,6 +409,12 @@ h1 {
   padding: 10px 12px;
   background: var(--slate-100);
   border-radius: var(--radius-sm);
+  transition: opacity 0.25s ease, transform 0.25s ease, height 0.25s ease, margin 0.25s ease, padding 0.25s ease;
+}
+.sentence-item.removing {
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
 }
 .sentence-text {
   flex: 1;
@@ -445,7 +451,7 @@ h1 {
 .copy-toast.show { opacity: 1; }
 .sentence-actions {
   display: flex;
-  gap: 4px;
+  gap: 0px;
   align-items: center;
 }
 .sentence-actions .btn-icon.btn-danger {
@@ -454,7 +460,7 @@ h1 {
   color: var(--slate-500);
   width: auto;
   height: auto;
-  padding: 4px;
+  padding: 8px;
   margin-right: -8px;
 }
 .sentence-actions .btn-icon.btn-danger .icon {
