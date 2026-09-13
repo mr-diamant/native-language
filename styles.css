@@ -198,7 +198,7 @@ h1 {
 }
 .input-clear {
   position: absolute;
-  right: 6px;
+  right: 9px;
   top: 50%;
   transform: translateY(-50%);
   appearance: none;
@@ -623,6 +623,7 @@ h1 {
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  padding-right: 12px;
 }
 .dic-toolbar .btn-icon {
   margin-left: auto;
