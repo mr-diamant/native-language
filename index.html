@@ -31,10 +31,10 @@
 
   <div id="app" class="hidden">
     <header class="app-header">
-      <div class="logo" aria-label="Native Language">
+      <a href="#today" class="logo" data-route="today" aria-label="Native Language">
         <img class="logo-img" src="icons/icon-512.png?v=2" alt="" width="32" height="32">
         <span class="logo-text">Native</span>
-      </div>
+      </a>
       <nav class="main-nav" id="mainNav" aria-label="Navigation">
         <button data-route="today" class="nav-link active" type="button">Today</button>
         <button data-route="words" class="nav-link" type="button">Words</button>
@@ -53,7 +53,7 @@
 
         <div id="todayEmpty" class="today-empty">
           <p class="today-date" id="todayDate"></p>
-          <p class="empty-title">Which English words are you learning today?</p>
+          <p class="empty-title" style="text-align: left;">Which English words are you learning today?</p>
           <form id="todayForm" class="today-form">
             <div class="word-field">
               <div class="input-with-clear">

@@ -52,9 +52,9 @@ body {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(232, 106, 74, 0.12);
+  background: linear-gradient(135deg, #fb916e 0%, #f97767 100%);
+  backdrop-filter: none;
+  border-bottom: none;
 }
 
 .logo {
@@ -63,8 +63,9 @@ body {
   gap: 8px;
   font-weight: 800;
   font-size: 18px;
-  color: var(--primary-900);
+  color: var(--white);
   letter-spacing: -0.01em;
+  text-decoration: none;
 }
 .logo-icon { font-size: 22px; }
 .logo-img {
@@ -87,7 +88,7 @@ body {
   appearance: none;
   border: none;
   background: transparent;
-  color: var(--slate-700);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 14px;
   font-weight: 600;
   padding: 8px 12px;
@@ -97,8 +98,8 @@ body {
   white-space: nowrap;
 }
 .nav-link.active, .nav-link:hover {
-  background: var(--primary-50);
-  color: var(--primary-900);
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
 }
 
 .main-content {
@@ -156,6 +157,7 @@ h1 {
   margin: 0 0 14px;
   color: var(--slate-500);
   font-size: 15px;
+  text-align: left;
 }
 
 .today-empty {
@@ -169,6 +171,7 @@ h1 {
   margin: 0 0 18px;
   font-size: 17px;
   color: var(--slate-700);
+  text-align: left;
 }
 
 .today-form {
@@ -959,6 +962,7 @@ h1 {
 .login-card .logo {
   justify-content: center;
   margin-bottom: 8px;
+  color: var(--primary-900);
 }
 .login-subtitle {
   font-size: 15px;
