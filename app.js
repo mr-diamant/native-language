@@ -878,6 +878,8 @@
 
     // Avatar upload with cropper
     let cropState = null;
+    let cropBaseScale = 1;
+    const FRAME_RATIO = 0.8;
     const avatarInput = $('#avatarInput');
     const cropModal = $('#avatarCropModal');
     const cropImage = $('#cropImage');
@@ -887,68 +889,79 @@
     function closeCropper() {
       if (cropModal) cropModal.classList.add('hidden');
       cropState = null;
-      if (cropImage) cropImage.src = '';
+      cropBaseScale = 1;
+      if (cropImage) {
+        cropImage.src = '';
+        cropImage.style.width = '';
+        cropImage.style.height = '';
+      }
       if (cropZoom) cropZoom.value = 1;
       if (avatarInput) avatarInput.value = '';
     }
 
     function updateCropPreview() {
-      if (!cropState || !cropImage) return;
-      const { panX, panY, zoom } = cropState;
-      cropImage.style.transform = `translate(-50%, -50%) translate(${panX}px, ${panY}px) scale(${zoom})`;
+      if (!cropState || !cropImage || !cropImage.naturalWidth) return;
+      const zoom = cropBaseScale * cropState.zoom;
+      cropImage.style.width = `${cropImage.naturalWidth * zoom}px`;
+      cropImage.style.height = `${cropImage.naturalHeight * zoom}px`;
+      cropImage.style.transform = `translate(-50%, -50%) translate(${cropState.panX}px, ${cropState.panY}px)`;
     }
 
     function clampPan() {
-      if (!cropState || !cropImage || !cropFrame) return;
+      if (!cropState || !cropImage || !cropFrame || !cropImage.naturalWidth) return;
       const stageRect = cropImage.parentElement.getBoundingClientRect();
       const frameRect = cropFrame.getBoundingClientRect();
-      const imgRect = cropImage.getBoundingClientRect();
-      const minVisible = Math.min(stageRect.width, stageRect.height) * 0.15;
-      const maxX = (imgRect.width / 2) + frameRect.width / 2 - minVisible;
-      const maxY = (imgRect.height / 2) + frameRect.height / 2 - minVisible;
-      cropState.panX = Math.max(-maxX, Math.min(maxX, cropState.panX));
-      cropState.panY = Math.max(-maxY, Math.min(maxY, cropState.panY));
+      const zoom = cropBaseScale * cropState.zoom;
+      const displayedW = cropImage.naturalWidth * zoom;
+      const displayedH = cropImage.naturalHeight * zoom;
+      const maxPanX = Math.max(0, (displayedW - frameRect.width) / 2);
+      const maxPanY = Math.max(0, (displayedH - frameRect.height) / 2);
+      cropState.panX = Math.max(-maxPanX, Math.min(maxPanX, cropState.panX));
+      cropState.panY = Math.max(-maxPanY, Math.min(maxPanY, cropState.panY));
     }
 
     function cropToDataURL() {
-      if (!cropState || !cropImage) return null;
-      const img = new Image();
-      img.src = cropImage.src;
+      if (!cropState || !cropImage || !cropImage.naturalWidth || !cropFrame) return null;
       const stage = cropImage.parentElement;
-      const frame = cropFrame;
-      if (!stage || !frame) return null;
       const stageRect = stage.getBoundingClientRect();
-      const frameRect = frame.getBoundingClientRect();
-      const displayedW = cropImage.naturalWidth * cropState.zoom * (stageRect.width / cropImage.naturalWidth);
-      const displayedH = cropImage.naturalHeight * cropState.zoom * (stageRect.width / cropImage.naturalWidth);
-      const imgRect = cropImage.getBoundingClientRect();
-      const cropX = (frameRect.left - imgRect.left) / cropState.zoom;
-      const cropY = (frameRect.top - imgRect.top) / cropState.zoom;
-      const cropSize = frameRect.width / cropState.zoom;
+      const frameRect = cropFrame.getBoundingClientRect();
+      const zoom = cropBaseScale * cropState.zoom;
+      const displayedW = cropImage.naturalWidth * zoom;
+      const displayedH = cropImage.naturalHeight * zoom;
+      const imageLeft = (stageRect.width - displayedW) / 2 + cropState.panX;
+      const imageTop = (stageRect.height - displayedH) / 2 + cropState.panY;
+      const cropX = frameRect.left - imageLeft;
+      const cropY = frameRect.top - imageTop;
+      const cropSize = frameRect.width;
+      const sourceX = cropX / zoom;
+      const sourceY = cropY / zoom;
+      const sourceSize = cropSize / zoom;
+
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, cropX, cropY, cropSize, cropSize, 0, 0, 512, 512);
+      ctx.drawImage(cropImage, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 512, 512);
       return canvas.toDataURL('image/jpeg', 0.92);
     }
 
     if (cropImage) {
       let dragStart = null;
-      cropImage.parentElement.addEventListener('pointerdown', (e) => {
+      const stage = cropImage.parentElement;
+      stage.addEventListener('pointerdown', (e) => {
         if (!cropState) return;
         dragStart = { x: e.clientX, y: e.clientY, panX: cropState.panX, panY: cropState.panY };
-        cropImage.parentElement.setPointerCapture(e.pointerId);
+        stage.setPointerCapture(e.pointerId);
       });
-      cropImage.parentElement.addEventListener('pointermove', (e) => {
+      stage.addEventListener('pointermove', (e) => {
         if (!dragStart || !cropState) return;
         cropState.panX = dragStart.panX + (e.clientX - dragStart.x);
         cropState.panY = dragStart.panY + (e.clientY - dragStart.y);
         clampPan();
         updateCropPreview();
       });
-      cropImage.parentElement.addEventListener('pointerup', () => { dragStart = null; });
-      cropImage.parentElement.addEventListener('pointercancel', () => { dragStart = null; });
+      stage.addEventListener('pointerup', () => { dragStart = null; });
+      stage.addEventListener('pointercancel', () => { dragStart = null; });
     }
 
     if (cropZoom) {
@@ -969,12 +982,25 @@
           if (!cropImage || !cropModal || !cropZoom) {
             localStorage.setItem(AVATAR_KEY, reader.result);
             renderProfile();
+            renderToday();
             return;
           }
           cropImage.src = reader.result;
           cropImage.onload = () => {
+            const stageSize = cropImage.parentElement.getBoundingClientRect().width;
+            const frameSize = stageSize * FRAME_RATIO;
+            const w = cropImage.naturalWidth;
+            const h = cropImage.naturalHeight;
+            // cover scale: frame is filled by the shorter side of the photo
+            cropBaseScale = frameSize / Math.min(w, h);
+            // contain ratio: full photo fits inside the stage
+            const containScale = stageSize / Math.max(w, h);
+            const minZoom = Math.max(0.5, containScale / cropBaseScale);
+            cropZoom.min = minZoom.toFixed(3);
+            cropZoom.max = '3';
+            cropZoom.value = '1';
             cropState = { panX: 0, panY: 0, zoom: 1 };
-            cropZoom.value = 1;
+            clampPan();
             updateCropPreview();
             cropModal.classList.remove('hidden');
           };
@@ -993,6 +1019,7 @@
         if (dataUrl) {
           localStorage.setItem(AVATAR_KEY, dataUrl);
           renderProfile();
+          renderToday();
         }
         closeCropper();
       });
