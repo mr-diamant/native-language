@@ -443,7 +443,46 @@ h1 {
   pointer-events: none;
 }
 .copy-toast.show { opacity: 1; }
-.sentence-actions { display: flex; gap: 4px; align-items: center; }
+.sentence-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.sentence-actions .btn-icon.btn-danger {
+  background: transparent;
+  border: none;
+  color: var(--slate-500);
+  width: auto;
+  height: auto;
+  padding: 4px;
+  margin-right: -8px;
+}
+.sentence-actions .btn-icon.btn-danger .icon {
+  width: 16px;
+  height: 16px;
+}
+.sentence-actions .btn-icon.btn-danger:active {
+  color: var(--red-700);
+  transform: none;
+}
+
+.sentence-item .sentence-actions .btn-icon.btn-danger {
+  background: transparent;
+  border: none;
+  color: var(--slate-500);
+  width: auto;
+  height: auto;
+  padding: 4px;
+  margin-right: -6px;
+}
+.sentence-item .sentence-actions .btn-icon.btn-danger .icon {
+  width: 16px;
+  height: 16px;
+}
+.sentence-item .sentence-actions .btn-icon.btn-danger:active {
+  color: var(--red-700);
+  transform: none;
+}
 
 .add-sentence-form {
   display: flex;
