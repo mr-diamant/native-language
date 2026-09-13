@@ -1048,6 +1048,9 @@
           }
           cropImage.src = reader.result;
           cropImage.onload = () => {
+            cropModal.classList.remove('hidden');
+            // force layout so stage has real size
+            cropModal.getBoundingClientRect();
             const stageSize = cropImage.parentElement.getBoundingClientRect().width;
             const frameSize = stageSize * FRAME_RATIO;
             const w = cropImage.naturalWidth;
@@ -1064,7 +1067,6 @@
             cropState = { panX: 0, panY: 0, zoom: minZoom };
             clampPan();
             updateCropPreview();
-            cropModal.classList.remove('hidden');
           };
         };
         reader.readAsDataURL(file);
@@ -1087,56 +1089,61 @@
       });
     }
 
-    // Profile name
+    // Profile info + password combined
     const profileInfoForm = $('#profileInfoForm');
     if (profileInfoForm) {
-      profileInfoForm.addEventListener('submit', (e) => {
+      profileInfoForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nameInput = $('#profileName');
-        const errorEl = $('#profileNameError');
-        const name = nameInput.value.trim();
-        if (!name) {
-          if (errorEl) errorEl.textContent = 'Name cannot be empty';
-          return;
-        }
-        localStorage.setItem(PROFILE_NAME_KEY, name);
-        if (errorEl) errorEl.textContent = '';
-        renderProfile();
-      });
-    }
-
-    // Change password
-    const changePasswordForm = $('#changePasswordForm');
-    if (changePasswordForm) {
-      changePasswordForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        $('#changePasswordError').textContent = '';
-        $('#changePasswordSuccess').textContent = '';
+        const nameError = $('#profileNameError');
+        const passwordError = $('#changePasswordError');
+        const passwordSuccess = $('#changePasswordSuccess');
         const current = $('#currentPassword').value;
         const newPass = $('#newPassword').value;
-        try {
-          const res = await fetch('change-password.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
-            body: JSON.stringify({ currentPassword: current, newPassword: newPass })
-          });
-          const json = await res.json();
-          if (!res.ok) {
-            if (res.status === 401) {
-              $('#changePasswordError').textContent = 'Session expired. Please sign in again.';
-              setTimeout(() => {
-                localStorage.removeItem(AUTH_TOKEN_KEY);
-                showLogin();
-              }, 1500);
-              return;
-            }
-            $('#changePasswordError').textContent = json.error || 'Failed to update password';
+
+        nameError.textContent = '';
+        passwordError.textContent = '';
+        passwordSuccess.textContent = '';
+
+        // Save name
+        const name = nameInput.value.trim();
+        if (name) {
+          localStorage.setItem(PROFILE_NAME_KEY, name);
+          renderProfile();
+          renderToday();
+        }
+
+        // Update password only if both fields filled
+        if (current || newPass) {
+          if (!current || !newPass) {
+            passwordError.textContent = 'Fill both password fields to update';
             return;
           }
-          $('#changePasswordSuccess').textContent = 'Password updated. Please sign in again.';
-          changePasswordForm.reset();
-        } catch (err) {
-          $('#changePasswordError').textContent = 'Network error';
+          try {
+            const res = await fetch('change-password.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+              body: JSON.stringify({ currentPassword: current, newPassword: newPass })
+            });
+            const json = await res.json();
+            if (!res.ok) {
+              if (res.status === 401) {
+                passwordError.textContent = 'Session expired. Please sign in again.';
+                setTimeout(() => {
+                  localStorage.removeItem(AUTH_TOKEN_KEY);
+                  showLogin();
+                }, 1500);
+                return;
+              }
+              passwordError.textContent = json.error || 'Failed to update password';
+              return;
+            }
+            passwordSuccess.textContent = 'Password updated. Please sign in again.';
+            $('#currentPassword').value = '';
+            $('#newPassword').value = '';
+          } catch (err) {
+            passwordError.textContent = 'Network error';
+          }
         }
       });
     }

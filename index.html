@@ -180,24 +180,16 @@
         </div>
 
         <div class="settings-card">
-          <h3 class="settings-title">Your name</h3>
-          <p class="settings-subtitle">How you want to be called in the app.</p>
+          <h3 class="settings-title">Profile</h3>
+          <p class="settings-subtitle">Your name and password.</p>
           <form id="profileInfoForm" class="profile-form">
             <input type="text" id="profileName" class="login-input" placeholder="e.g. Vitaliy" autocomplete="name">
+            <input type="password" id="currentPassword" class="login-input" placeholder="Current password" autocomplete="current-password">
+            <input type="password" id="newPassword" class="login-input" placeholder="New password" autocomplete="new-password">
             <p id="profileNameError" class="login-error"></p>
-            <button type="submit" class="cta">Save name</button>
-          </form>
-        </div>
-
-        <div class="settings-card">
-          <h3 class="settings-title">Change password</h3>
-          <p class="settings-subtitle">Update your account password.</p>
-          <form id="changePasswordForm" class="profile-form">
-            <input type="password" id="currentPassword" class="login-input" placeholder="Current password" required autocomplete="current-password">
-            <input type="password" id="newPassword" class="login-input" placeholder="New password" required autocomplete="new-password">
             <p id="changePasswordError" class="login-error"></p>
             <p id="changePasswordSuccess" class="profile-success"></p>
-            <button type="submit" class="cta">Update password</button>
+            <button type="submit" class="cta">Update</button>
           </form>
         </div>
 
