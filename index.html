@@ -46,11 +46,13 @@
 
     <main id="main" class="main-content">
       <section id="route-today" class="route active">
-        <div class="today-header">
-          <h1>Today's words</h1>
-          <p class="today-date" id="todayDate"></p>
+        <div class="today-user-bar" id="todayUserBar">
+          <span class="today-user-name" id="todayUserName"></span>
+          <img class="today-user-avatar" id="todayUserAvatar" src="" alt="" width="40" height="40">
         </div>
+
         <div id="todayEmpty" class="today-empty">
+          <p class="today-date" id="todayDate"></p>
           <p class="empty-title">Which English words are you learning today?</p>
           <form id="todayForm" class="today-form">
             <div class="word-field">

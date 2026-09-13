@@ -265,6 +265,24 @@
   function renderToday() {
     const data = loadData();
     const { day, key } = getOrCreateToday(data);
+
+    const name = localStorage.getItem(PROFILE_NAME_KEY) || '';
+    const avatar = localStorage.getItem(AVATAR_KEY) || '';
+    const todayUserBar = $('#todayUserBar');
+    const todayUserName = $('#todayUserName');
+    const todayUserAvatar = $('#todayUserAvatar');
+    if (todayUserBar) {
+      todayUserBar.classList.toggle('hidden', !name && !avatar);
+    }
+    if (todayUserName) {
+      todayUserName.textContent = name;
+      todayUserName.classList.toggle('hidden', !name);
+    }
+    if (todayUserAvatar) {
+      todayUserAvatar.src = avatar;
+      todayUserAvatar.classList.toggle('hidden', !avatar);
+    }
+
     $('#todayDate').textContent = formatDate(key);
 
     const empty = $('#todayEmpty');
