@@ -878,8 +878,10 @@
 
     // Avatar upload with cropper
     let cropState = null;
-    let cropBaseScale = 1;
+    let cropBaseScale = 1; // scale at zoom=1 (contain)
+    let cropCoverScale = 1; // scale at which the frame is fully filled
     const FRAME_RATIO = 0.8;
+    const OUTPUT_SIZE = 512;
     const avatarInput = $('#avatarInput');
     const cropModal = $('#avatarCropModal');
     const cropImage = $('#cropImage');
@@ -890,6 +892,7 @@
       if (cropModal) cropModal.classList.add('hidden');
       cropState = null;
       cropBaseScale = 1;
+      cropCoverScale = 1;
       if (cropImage) {
         cropImage.src = '';
         cropImage.style.width = '';
@@ -914,10 +917,18 @@
       const zoom = cropBaseScale * cropState.zoom;
       const displayedW = cropImage.naturalWidth * zoom;
       const displayedH = cropImage.naturalHeight * zoom;
-      const maxPanX = Math.max(0, (displayedW - frameRect.width) / 2);
-      const maxPanY = Math.max(0, (displayedH - frameRect.height) / 2);
-      cropState.panX = Math.max(-maxPanX, Math.min(maxPanX, cropState.panX));
-      cropState.panY = Math.max(-maxPanY, Math.min(maxPanY, cropState.panY));
+      // For circular frame: restrict pan so the circle stays within image bounds
+      const frameRadius = frameRect.width / 2;
+      const imgCenterX = stageRect.width / 2 + cropState.panX;
+      const imgCenterY = stageRect.height / 2 + cropState.panY;
+      const imgHalfW = displayedW / 2;
+      const imgHalfH = displayedH / 2;
+      const minX = frameRadius - imgHalfW;
+      const maxX = imgHalfW - frameRadius;
+      const minY = frameRadius - imgHalfH;
+      const maxY = imgHalfH - frameRadius;
+      cropState.panX = Math.max(minX, Math.min(maxX, cropState.panX));
+      cropState.panY = Math.max(minY, Math.min(maxY, cropState.panY));
     }
 
     function cropToDataURL() {
@@ -938,30 +949,75 @@
       const sourceSize = cropSize / zoom;
 
       const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
+      canvas.width = OUTPUT_SIZE;
+      canvas.height = OUTPUT_SIZE;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(cropImage, sourceX, sourceY, sourceSize, sourceSize, 0, 0, 512, 512);
+      // circular clip
+      ctx.beginPath();
+      ctx.arc(OUTPUT_SIZE / 2, OUTPUT_SIZE / 2, OUTPUT_SIZE / 2, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(cropImage, sourceX, sourceY, sourceSize, sourceSize, 0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
       return canvas.toDataURL('image/jpeg', 0.92);
+    }
+
+    function startCropDrag(stage, e) {
+      if (!cropState) return null;
+      stage.setPointerCapture(e.pointerId);
+      return { x: e.clientX, y: e.clientY, panX: cropState.panX, panY: cropState.panY };
     }
 
     if (cropImage) {
       let dragStart = null;
+      let pinchStart = null;
       const stage = cropImage.parentElement;
+
       stage.addEventListener('pointerdown', (e) => {
         if (!cropState) return;
-        dragStart = { x: e.clientX, y: e.clientY, panX: cropState.panX, panY: cropState.panY };
-        stage.setPointerCapture(e.pointerId);
+        if (e.pointerType === 'touch') {
+          const touches = Array.from(stage.getPointerEvents ? stage.getPointerEvents() : []).filter(ev => ev.pointerType === 'touch');
+          if (touches.length >= 2) {
+            // pinch
+            const [t1, t2] = touches;
+            pinchStart = {
+              dist: Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY),
+              zoom: cropState.zoom
+            };
+            dragStart = null;
+            return;
+          }
+        }
+        dragStart = startCropDrag(stage, e);
+        pinchStart = null;
       });
+
       stage.addEventListener('pointermove', (e) => {
-        if (!dragStart || !cropState) return;
+        if (!cropState) return;
+        if (pinchStart) {
+          const touches = Array.from(stage.getPointerEvents ? stage.getPointerEvents() : []).filter(ev => ev.pointerType === 'touch');
+          if (touches.length >= 2) {
+            const [t1, t2] = touches;
+            const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+            const newZoom = pinchStart.zoom * (dist / pinchStart.dist);
+            cropState.zoom = Math.max(Number(cropZoom.min), Math.min(Number(cropZoom.max), newZoom));
+            if (cropZoom) cropZoom.value = cropState.zoom;
+            clampPan();
+            updateCropPreview();
+          }
+          return;
+        }
+        if (!dragStart) return;
         cropState.panX = dragStart.panX + (e.clientX - dragStart.x);
         cropState.panY = dragStart.panY + (e.clientY - dragStart.y);
         clampPan();
         updateCropPreview();
       });
-      stage.addEventListener('pointerup', () => { dragStart = null; });
-      stage.addEventListener('pointercancel', () => { dragStart = null; });
+
+      stage.addEventListener('pointerup', (e) => {
+        if (dragStart && e.pointerId === (dragStart.pointerId || e.pointerId)) dragStart = null;
+        pinchStart = null;
+      });
+      stage.addEventListener('pointercancel', () => { dragStart = null; pinchStart = null; });
     }
 
     if (cropZoom) {
@@ -991,15 +1047,19 @@
             const frameSize = stageSize * FRAME_RATIO;
             const w = cropImage.naturalWidth;
             const h = cropImage.naturalHeight;
-            // cover scale: frame is filled by the shorter side of the photo
-            cropBaseScale = frameSize / Math.min(w, h);
-            // contain ratio: full photo fits inside the stage
-            const containScale = stageSize / Math.max(w, h);
-            const minZoom = Math.max(0.5, containScale / cropBaseScale);
+
+            // base scale = contain (full photo fits in the frame square)
+            cropBaseScale = frameSize / Math.max(w, h);
+            // cover ratio = the zoom needed so the circle is fully filled
+            const coverZoom = Math.max(w, h) / Math.min(w, h);
+            // min zoom cannot be lower than coverZoom, otherwise the photo won't fill the circle
+            const minZoom = Math.max(1, coverZoom);
+            const maxZoom = Math.max(3, coverZoom * 2);
+
             cropZoom.min = minZoom.toFixed(3);
-            cropZoom.max = '3';
-            cropZoom.value = '1';
-            cropState = { panX: 0, panY: 0, zoom: 1 };
+            cropZoom.max = maxZoom.toFixed(3);
+            cropZoom.value = minZoom.toFixed(3);
+            cropState = { panX: 0, panY: 0, zoom: minZoom };
             clampPan();
             updateCropPreview();
             cropModal.classList.remove('hidden');
