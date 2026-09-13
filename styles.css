@@ -617,6 +617,18 @@ h1 {
 .dic-sentence span {
   flex: 1;
 }
+.dic-sentence .sentence-text {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 6px 0;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+.dic-sentence .sentence-text:active {
+  background: var(--teal-50);
+}
 .dic-sentence .dic-speak {
   flex-shrink: 0;
   margin-top: -2px;

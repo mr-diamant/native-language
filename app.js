@@ -445,7 +445,7 @@
       const sentencesHtml = w.sentences.length
         ? w.sentences.map((s, si) => `
             <li class="dic-sentence">
-              <span>${escapeHtml(s)}</span>
+              <span class="sentence-text" data-copy="${escapeHtml(s)}" role="button" tabindex="0" aria-label="Copy sentence">${escapeHtml(s)}</span>
               <button class="btn btn-icon btn-secondary dic-speak" data-speak="${escapeHtml(s)}" type="button" aria-label="Speak">${icons.play}</button>
             </li>
           `).join('')
