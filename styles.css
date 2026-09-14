@@ -348,7 +348,8 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
+  padding: 4px 0;
 }
 .word-card-head .btn-icon {
   margin-left: auto;
@@ -362,10 +363,7 @@ h1 {
   line-height: 1.2;
 }
 .word-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 6px;
+  display: none;
 }
 .word-status {
   font-size: 12px;
