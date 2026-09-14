@@ -304,10 +304,6 @@
           <h3 class="word-title">${escapeHtml(w.term)}</h3>
           <button class="btn btn-icon btn-secondary" data-speak="${escapeHtml(w.term)}" type="button" aria-label="Speak">${icons.play}</button>
         </div>
-        <div class="word-meta">
-          <span class="word-status ${w.used ? 'used' : 'not-used'}">${w.used ? icons.check + ' Used today' : icons.hourglass + ' Not used yet'}</span>
-          <span class="word-status not-used">${w.sentences.length} sentence${w.sentences.length === 1 ? '' : 's'}</span>
-        </div>
       </div>
     `).join('');
   }
